@@ -8,6 +8,7 @@ import org.optaplanner.core.api.domain.solution.cloner.DeepPlanningClone;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.OneToOne;
 import java.io.Serializable;
 
 @Entity
@@ -26,7 +27,8 @@ public class CloudComputer implements Serializable, Comparable<CloudComputer> {
     private int memoryCapacity;
     private int networkCapacity;
     private int cost;
-    private String nodeType;
+    @OneToOne
+    private NodeType nodeType;
 
 
     public int getDifficultyIndex() {

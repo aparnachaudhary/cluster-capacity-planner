@@ -13,6 +13,7 @@ import org.optaplanner.core.api.domain.variable.PlanningVariable;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import java.io.Serializable;
 
 @PlanningEntity(difficultyComparatorClass = ProcessDifficultyComparator.class)
@@ -31,8 +32,8 @@ public class CloudProcess implements Serializable, Comparable<CloudProcess> {
     private int cpuRequired;
     private int memoryRequired;
     private int networkRequired;
-    private String nodeTypeRequired;
-
+    @OneToOne
+    private NodeType nodeTypeRequired;
 
     @PlanningVariable(valueRangeProviderRefs = "computerProvider", strengthComparatorClass = ComputerStrengthComparator.class, nullable = true)
     @ManyToOne
