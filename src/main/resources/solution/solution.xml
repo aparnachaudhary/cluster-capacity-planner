@@ -6,7 +6,7 @@
   <scanAnnotatedClasses/>-->
     <!-- Define the score function -->
     <scoreDirectorFactory>
-        <scoreDrl>constraint/score.drl</scoreDrl>
+        <scoreDrl>solution/score.drl</scoreDrl>
         <initializingScoreTrend>ONLY_DOWN</initializingScoreTrend>
     </scoreDirectorFactory>
     <!-- Configure the optimization algorithms (optional) -->

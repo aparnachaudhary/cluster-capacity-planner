@@ -7,6 +7,7 @@ import io.github.aparnachaudhary.capacityplanner.listener.CloudBalanceSolverEven
 import io.github.aparnachaudhary.capacityplanner.repository.CloudBalanceRepository;
 import io.github.aparnachaudhary.capacityplanner.repository.CloudComputerRepository;
 import io.github.aparnachaudhary.capacityplanner.repository.CloudProcessRepository;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
@@ -22,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
+@Slf4j
 public class CommandLineAppStartupRunner implements CommandLineRunner {
 
     private CloudProcessRepository cloudProcessRepository;
@@ -29,7 +31,8 @@ public class CommandLineAppStartupRunner implements CommandLineRunner {
     private CloudBalanceSolverEventListener solverEventListener;
     private CloudBalanceRepository cloudBalanceRepository;
 
-    public CommandLineAppStartupRunner(CloudProcessRepository cloudProcessRepository, CloudComputerRepository cloudComputerRepository, CloudBalanceSolverEventListener solverEventListener, CloudBalanceRepository cloudBalanceRepository) {
+    public CommandLineAppStartupRunner(CloudProcessRepository cloudProcessRepository, CloudComputerRepository cloudComputerRepository,
+                                       CloudBalanceSolverEventListener solverEventListener, CloudBalanceRepository cloudBalanceRepository) {
         this.cloudProcessRepository = cloudProcessRepository;
         this.cloudComputerRepository = cloudComputerRepository;
         this.solverEventListener = solverEventListener;
@@ -37,7 +40,7 @@ public class CommandLineAppStartupRunner implements CommandLineRunner {
     }
 
     @Override
-    public void run(String...args) throws Exception {
+    public void run(String... args) throws Exception {
         InputStream is = this.getClass().getResourceAsStream("/data/computer-value/computers-2.csv");
         Iterable<CSVRecord> records = CSVFormat.DEFAULT.withFirstRecordAsHeader().parse(new InputStreamReader(is));
         List<CloudComputer> computers = new ArrayList<>(2);
@@ -65,15 +68,15 @@ public class CommandLineAppStartupRunner implements CommandLineRunner {
         cloudBalanceRepository.save(initSolution);
 
         is = this.getClass().getResourceAsStream("/solution/solution.xml");
-//        is = new ClassPathResource("/solution/solution.xml").getInputStream();
         SolverFactory<CloudBalance> solutionFactory = SolverFactory.createFromXmlInputStream(is);
         Solver<CloudBalance> solver = solutionFactory.buildSolver();
         solver.addEventListener(solverEventListener);
-        CloudBalance solution = solver.solve(initSolution);
-        cloudBalanceRepository.save(solution);
 
-        System.out.println(">>>>" + solver.explainBestScore());
-        solution.getCloudProcesses().forEach(System.out::println);
+        log.info("Solving Capacity Planning Problem for initSolution={}", initSolution);
+        CloudBalance solution = solver.solve(initSolution);
+        log.info("Solver score={}" + solver.explainBestScore());
+        solution.getCloudProcesses().forEach(cloudProcess -> log.info(cloudProcess.toString()));
+        cloudBalanceRepository.save(solution);
 
     }
 }
