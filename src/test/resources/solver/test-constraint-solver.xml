@@ -38,13 +38,13 @@
         <!-- TO PURPOSE? -->
         <!-- ========================= -->
         <!--<assertionScoreDirectorFactory>-->
-        <easyScoreCalculatorClass>io.github.aparnachaudhary.capacityplanner.solver.CloudBalancingMapBasedEasyScoreCalculator</easyScoreCalculatorClass>
+        <!--<easyScoreCalculatorClass>io.github.aparnachaudhary.capacityplanner.solver.CloudBalancingMapBasedEasyScoreCalculator</easyScoreCalculatorClass>-->
         <!--</assertionScoreDirectorFactory>-->
 
         <!-- ========================= -->
         <!-- TO USE DROOLS RULES ENGINE -->
         <!-- ========================= -->
-        <!--<scoreDrl>solution/capacity-planner-hardmediumsoft-score.drl</scoreDrl>-->
+        <scoreDrl>solution/capacity-planner-hardmediumsoft-score.drl</scoreDrl>
 
         <!-- ========================= -->
         <!-- TO PURPOSE? -->

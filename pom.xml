@@ -18,6 +18,14 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <java.version>1.8</java.version>
+        <version.org.kie>7.26.0.Final</version.org.kie>
+    </properties>
+
+
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -37,12 +45,6 @@
         </dependencies>
     </dependencyManagement>
 
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <java.version>1.8</java.version>
-        <version.org.kie>7.22.0.Final</version.org.kie>
-    </properties>
 
     <dependencies>
         <dependency>

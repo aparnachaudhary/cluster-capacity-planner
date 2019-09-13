@@ -8,6 +8,11 @@ import io.github.aparnachaudhary.capacityplanner.domain.CloudProcess;
 
 global HardMediumSoftScoreHolder scoreHolder;
 
+// ############################################################################
+// Hard constraints
+// ############################################################################
+
+
 rule "CPU capacity"
     when
         $computer : CloudComputer($cpuCapacity : cpuCapacity)
@@ -41,13 +46,21 @@ rule "Network capacity"
         scoreHolder.addHardConstraintMatch(kcontext, $networkCapacity - $totalUsed);
 end
 
+// ############################################################################
+// Medium constraints
+// ############################################################################
+
 rule "Not Assigned"
     when
-        CloudProcess($weightIndex : getDifficultyIndex() ,cloudComputer == null)
+        CloudProcess($weightIndex : getDifficultyIndex(), cloudComputer == null)
     then
         scoreHolder.addMediumConstraintMatch(kcontext, -$weightIndex);
 end
 
+
+// ############################################################################
+// Soft constraints
+// ############################################################################
 
 rule "Computer Cost"
     when

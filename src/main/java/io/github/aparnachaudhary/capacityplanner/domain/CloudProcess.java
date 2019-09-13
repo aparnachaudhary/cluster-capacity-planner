@@ -4,8 +4,6 @@ import io.github.aparnachaudhary.capacityplanner.extension.ComputerStrengthCompa
 import io.github.aparnachaudhary.capacityplanner.extension.ProcessDifficultyComparator;
 import lombok.Builder;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.optaplanner.core.api.domain.entity.PlanningEntity;
 import org.optaplanner.core.api.domain.lookup.PlanningId;
@@ -24,6 +22,8 @@ import java.io.Serializable;
 @Builder
 public class CloudProcess implements Serializable, Comparable<CloudProcess> {
 
+    private static final long serialVersionUID = -224283897820531278L;
+
     @PlanningId
     @Id
     protected Long id;
@@ -31,6 +31,7 @@ public class CloudProcess implements Serializable, Comparable<CloudProcess> {
     private int cpuRequired;
     private int memoryRequired;
     private int networkRequired;
+    private String nodeTypeRequired;
 
 
     @PlanningVariable(valueRangeProviderRefs = "computerProvider", strengthComparatorClass = ComputerStrengthComparator.class, nullable = true)
@@ -45,15 +46,18 @@ public class CloudProcess implements Serializable, Comparable<CloudProcess> {
     public String toString() {
         return "CloudProcess - " + id +
                 " with cpuRequired:" + cpuRequired +
-                ", memoryRequired:" + memoryRequired+
+                ", memoryRequired:" + memoryRequired +
                 ", networkRequired:" + networkRequired +
+                ", nodeTypeRequired:" + nodeTypeRequired +
                 "; Assigned to CloudComputer: " + cloudComputer;
     }
 
     @Override
     public int compareTo(CloudProcess o) {
-        return new CompareToBuilder().append(getClass().getName(), o.getClass().getName())
-                .append(id, o.id).toComparison();
+        return new CompareToBuilder()
+                .append(getClass().getName(), o.getClass().getName())
+                .append(id, o.id)
+                .toComparison();
     }
 
 }

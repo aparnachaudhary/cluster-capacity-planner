@@ -1,0 +1,71 @@
+package io.github.aparnachaudhary.capacityplanner.domain;
+dialect  "java"
+
+import org.optaplanner.core.api.score.buildin.hardmediumsoft.HardMediumSoftScoreHolder;
+
+import io.github.aparnachaudhary.capacityplanner.domain.CloudComputer;
+import io.github.aparnachaudhary.capacityplanner.domain.CloudProcess;
+
+global HardMediumSoftScoreHolder scoreHolder;
+
+// ############################################################################
+// Hard constraints
+// ############################################################################
+
+
+rule "CPU capacity"
+    when
+        $computer : CloudComputer($cpuCapacity : cpuCapacity, $nodeType: nodeType)
+        $totalUsed : Integer($totalUsed > $cpuCapacity) from accumulate(
+            CloudProcess(cloudComputer == $computer, $cpuRequired : cpuRequired),
+            sum($cpuRequired)
+        )
+    then
+        scoreHolder.addHardConstraintMatch(kcontext, $cpuCapacity - $totalUsed);
+end
+
+rule "Memory capacity"
+    when
+        $computer : CloudComputer($memoryCapacity : memoryCapacity)
+        $totalUsed : Integer($totalUsed > $memoryCapacity) from accumulate(
+            CloudProcess(cloudComputer == $computer, $memoryRequired : memoryRequired),
+            sum($memoryRequired)
+        )
+    then
+        scoreHolder.addHardConstraintMatch(kcontext, $memoryCapacity - $totalUsed);
+end
+
+rule "Network capacity"
+    when
+        $computer : CloudComputer($networkCapacity : networkCapacity)
+        $totalUsed : Integer($totalUsed > $networkCapacity) from accumulate(
+            CloudProcess(cloudComputer == $computer, $networkRequired : networkRequired),
+            sum($networkRequired)
+        )
+    then
+        scoreHolder.addHardConstraintMatch(kcontext, $networkCapacity - $totalUsed);
+end
+
+// ############################################################################
+// Medium constraints
+// ############################################################################
+
+rule "Not Assigned"
+    when
+        CloudProcess($weightIndex : getDifficultyIndex(), cloudComputer == null)
+    then
+        scoreHolder.addMediumConstraintMatch(kcontext, -$weightIndex);
+end
+
+
+// ############################################################################
+// Soft constraints
+// ############################################################################
+
+rule "Computer Cost"
+    when
+        $computer : CloudComputer($cost : cost)
+        exists CloudProcess(cloudComputer == $computer)
+    then
+        scoreHolder.addSoftConstraintMatch(kcontext, - $cost);
+end

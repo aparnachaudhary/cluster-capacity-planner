@@ -11,6 +11,7 @@ import java.io.Serializable;
 
 @MappedSuperclass
 public class AbstractEntity implements Serializable, Comparable<AbstractEntity> {
+
     @Setter
     @Getter
     @PlanningId

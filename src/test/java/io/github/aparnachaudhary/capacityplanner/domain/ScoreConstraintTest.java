@@ -10,7 +10,7 @@ import java.util.Collections;
 
 public class ScoreConstraintTest {
 
-    private HardMediumSoftScoreVerifier<CloudBalance> scoreVerifier = new HardMediumSoftScoreVerifier<>(SolverFactory.createFromXmlResource("solution/solution.xml"));
+    private HardMediumSoftScoreVerifier<CloudBalance> scoreVerifier = new HardMediumSoftScoreVerifier<>(SolverFactory.createFromXmlResource("solver/test-constraint-solver.xml"));
 
     @Test
     public void testCpuCapacity() {
