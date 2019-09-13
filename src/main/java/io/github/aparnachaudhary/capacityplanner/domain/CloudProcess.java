@@ -33,6 +33,8 @@ public class CloudProcess implements Serializable, Comparable<CloudProcess> {
     private int memoryRequired;
     private int networkRequired;
     @OneToOne
+    private AvailabilityZone availabilityZoneRequired;
+    @OneToOne
     private NodeType nodeTypeRequired;
 
     @PlanningVariable(valueRangeProviderRefs = "computerProvider", strengthComparatorClass = ComputerStrengthComparator.class, nullable = true)
@@ -49,6 +51,7 @@ public class CloudProcess implements Serializable, Comparable<CloudProcess> {
                 " with cpuRequired:" + cpuRequired +
                 ", memoryRequired:" + memoryRequired +
                 ", networkRequired:" + networkRequired +
+                ", availabilityZoneRequired:" + availabilityZoneRequired +
                 ", nodeTypeRequired:" + nodeTypeRequired +
                 "; Assigned to CloudComputer: " + cloudComputer;
     }

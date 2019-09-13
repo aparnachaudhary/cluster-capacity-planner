@@ -77,6 +77,7 @@ public class SolutionDataImporter implements ApplicationRunner {
                     .cpuRequired(Integer.parseInt(record.get("cpu")))
                     .memoryRequired(Integer.parseInt(record.get("memory")))
                     .networkRequired(Integer.parseInt(record.get("network")))
+                    .availabilityZoneRequired(AvailabilityZone.builder().id(Long.parseLong(record.get("availabilityZone"))).build())
                     .nodeTypeRequired(NodeType.builder().id(Long.parseLong(record.get("nodeType"))).build())
                     .build());
         }
@@ -95,8 +96,9 @@ public class SolutionDataImporter implements ApplicationRunner {
                     .cpuCapacity(Integer.parseInt(record.get("cpu")))
                     .memoryCapacity(Integer.parseInt(record.get("memory")))
                     .networkCapacity(Integer.parseInt(record.get("network")))
-                    .cost(Integer.parseInt(record.get("cost")))
+                    .availabilityZone(AvailabilityZone.builder().id(Long.parseLong(record.get("availabilityZone"))).build())
                     .nodeType(NodeType.builder().id(Long.parseLong(record.get("nodeType"))).build())
+                    .cost(Integer.parseInt(record.get("cost")))
                     .build());
         }
         cloudComputerRepository.saveAll(computers);

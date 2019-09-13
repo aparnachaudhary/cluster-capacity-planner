@@ -28,6 +28,8 @@ public class CloudComputer implements Serializable, Comparable<CloudComputer> {
     private int networkCapacity;
     private int cost;
     @OneToOne
+    private AvailabilityZone availabilityZone;
+    @OneToOne
     private NodeType nodeType;
 
 
