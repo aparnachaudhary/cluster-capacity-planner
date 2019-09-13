@@ -50,7 +50,11 @@ public class SolutionDataImporter implements ApplicationRunner {
         List<CloudComputer> computers = fetchAndSaveCloudComputers();
         List<CloudProcess> processes = fetchAndSaveCloudProcesses();
 
-        val initSolution = new CloudBalance(0L, computers, processes);
+        val initSolution = CloudBalance.builder()
+                .id(0L)
+                .cloudComputers(computers)
+                .cloudProcesses(processes)
+                .build();
 
         InputStream cloudSolutionStream = this.getClass().getResourceAsStream("/solution/solution.xml");
         SolverFactory<CloudBalance> solutionFactory = SolverFactory.createFromXmlInputStream(cloudSolutionStream);
@@ -63,7 +67,6 @@ public class SolutionDataImporter implements ApplicationRunner {
         solution.getCloudProcesses().forEach(cloudProcess -> log.info(cloudProcess.toString()));
 
     }
-
 
 
     private List<CloudProcess> fetchAndSaveCloudProcesses() throws IOException {

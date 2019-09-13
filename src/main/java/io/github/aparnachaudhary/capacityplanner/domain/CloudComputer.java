@@ -45,4 +45,16 @@ public class CloudComputer implements Serializable, Comparable<CloudComputer> {
                 .toComparison();
     }
 
+    @Override
+    public String toString() {
+
+        return "[CloudComputer - " + id +
+                " with cpuCapacity:" + cpuCapacity +
+                ", memoryCapacity:" + memoryCapacity +
+                ", networkCapacity:" + networkCapacity +
+                ", availabilityZone:" + availabilityZone +
+                ", nodeType:" + nodeType +
+                ", cost:" + cost + "]";
+    }
+
 }

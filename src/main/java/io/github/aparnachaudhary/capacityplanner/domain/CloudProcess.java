@@ -47,6 +47,7 @@ public class CloudProcess implements Serializable, Comparable<CloudProcess> {
 
     @Override
     public String toString() {
+
         return "CloudProcess - " + id +
                 " with cpuRequired:" + cpuRequired +
                 ", memoryRequired:" + memoryRequired +

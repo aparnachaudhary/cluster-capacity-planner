@@ -35,7 +35,11 @@ public class ScoreConstraintTest {
                 .cloudComputer(c1)
                 .build();
 
-        val s1 = new CloudBalance(1L, Collections.singletonList(c1), Collections.singletonList(p1));
+        val s1 = CloudBalance.builder()
+                .id(1L)
+                .cloudComputers(Collections.singletonList(c1))
+                .cloudProcesses(Collections.singletonList(p1))
+                .build();
 
         scoreVerifier.assertHardWeight("CPU capacity", 0, s1);
 
@@ -66,7 +70,11 @@ public class ScoreConstraintTest {
                 .cloudComputer(c1)
                 .build();
 
-        val s1 = new CloudBalance(1L, Collections.singletonList(c1), Collections.singletonList(p1));
+        val s1 = CloudBalance.builder()
+                .id(1L)
+                .cloudComputers(Collections.singletonList(c1))
+                .cloudProcesses(Collections.singletonList(p1))
+                .build();
 
         scoreVerifier.assertHardWeight("Memory capacity", 0, s1);
 
@@ -97,7 +105,11 @@ public class ScoreConstraintTest {
                 .cloudComputer(c1)
                 .build();
 
-        val s1 = new CloudBalance(1L, Collections.singletonList(c1), Collections.singletonList(p1));
+        val s1 = CloudBalance.builder()
+                .id(1L)
+                .cloudComputers(Collections.singletonList(c1))
+                .cloudProcesses(Collections.singletonList(p1))
+                .build();
 
         scoreVerifier.assertHardWeight("Network capacity", 0, s1);
 
@@ -140,7 +152,11 @@ public class ScoreConstraintTest {
                 .cloudComputer(c2)
                 .build();
 
-        val s1 = new CloudBalance(1L, Arrays.asList(c1, c2), Collections.singletonList(p1));
+        val s1 = CloudBalance.builder()
+                .id(1L)
+                .cloudComputers(Arrays.asList(c1,c2))
+                .cloudProcesses(Collections.singletonList(p1))
+                .build();
 
         scoreVerifier.assertSoftWeight("Computer Cost", -50, s1);
 
@@ -166,7 +182,12 @@ public class ScoreConstraintTest {
                 .networkRequired(500)
                 .build();
 
-        val s1 = new CloudBalance(1L, Collections.singletonList(c1), Collections.singletonList(p1));
+        val s1 = CloudBalance.builder()
+                .id(1L)
+                .cloudComputers(Collections.singletonList(c1))
+                .cloudProcesses(Collections.singletonList(p1))
+                .build();
+
         scoreVerifier.assertMediumWeight("Not Assigned", (-1) * p1.getDifficultyIndex(), s1);
 
         p1.setCloudComputer(c1);

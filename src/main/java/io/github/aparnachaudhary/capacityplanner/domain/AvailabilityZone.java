@@ -19,4 +19,10 @@ public class AvailabilityZone {
     protected Long id;
 
     private String name;
+
+    @Override
+    public String toString() {
+        return "AvailabilityZone - " + id +
+                " with name:" + name;
+    }
 }

@@ -19,4 +19,10 @@ public class NodeType {
     protected Long id;
 
     private String name;
+
+    @Override
+    public String toString() {
+        return "NodeType - " + id +
+                " with name:" + name;
+    }
 }
