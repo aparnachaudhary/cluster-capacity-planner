@@ -1,0 +1,37 @@
+<solver>
+    <!-- Define the model -->
+    <solutionClass>io.github.aparnachaudhary.capacityplanner.domain.CloudBalance</solutionClass>
+    <entityClass>io.github.aparnachaudhary.capacityplanner.domain.CloudProcess</entityClass>
+    <!--
+  <scanAnnotatedClasses/>-->
+    <!-- Define the score function -->
+    <scoreDirectorFactory>
+        <scoreDrl>constraint/score.drl</scoreDrl>
+        <initializingScoreTrend>ONLY_DOWN</initializingScoreTrend>
+    </scoreDirectorFactory>
+    <!-- Configure the optimization algorithms (optional) -->
+    <termination>
+        <!--
+        <bestScoreLimit>0hard/-50000soft</bestScoreLimit>
+        -->
+        <secondsSpentLimit>10</secondsSpentLimit>
+    </termination>
+    <constructionHeuristic>
+        <constructionHeuristicType>FIRST_FIT_DECREASING</constructionHeuristicType>
+    </constructionHeuristic>
+    <localSearch>
+        <changeMoveSelector>
+            <selectionOrder>ORIGINAL</selectionOrder>
+        </changeMoveSelector>
+        <!-- changeMoveSelector is the generic form of RowChangeMoveFactory: -->
+        <!--<moveListFactory>-->
+        <!--<moveListFactoryClass>org.optaplanner.examples.nqueens.solver.move.factory.RowChangeMoveFactory</moveListFactoryClass>-->
+        <!--</moveListFactory>-->
+        <acceptor>
+            <entityTabuRatio>0.02</entityTabuRatio>
+        </acceptor>
+        <forager>
+            <!-- Real world problems require use of <acceptedCountLimit> -->
+        </forager>
+    </localSearch>
+</solver>
