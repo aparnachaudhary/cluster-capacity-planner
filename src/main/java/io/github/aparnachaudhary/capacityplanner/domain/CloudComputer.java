@@ -1,26 +1,30 @@
 package io.github.aparnachaudhary.capacityplanner.domain;
 
+import lombok.Builder;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.commons.lang3.builder.CompareToBuilder;
+import org.optaplanner.core.api.domain.lookup.PlanningId;
 import org.optaplanner.core.api.domain.solution.cloner.DeepPlanningClone;
 
 import javax.persistence.Entity;
+import javax.persistence.Id;
+import java.io.Serializable;
 
 @Entity
 @DeepPlanningClone
-public class CloudComputer extends AbstractEntity{
+@Data
+@Builder
+public class CloudComputer implements Serializable, Comparable<CloudComputer> {
 
-    @Setter
-    @Getter
+    @PlanningId
+    @Id
+    protected Long id;
+
     private int cpuCapacity;
-    @Setter
-    @Getter
     private int memoryCapacity;
-    @Setter
-    @Getter
     private int networkCapacity;
-    @Setter
-    @Getter
     private int cost;
 
     public int getDifficultyIndex() {
@@ -28,25 +32,9 @@ public class CloudComputer extends AbstractEntity{
     }
 
     @Override
-    public String toString() {
-        return "CloudComputer - " + id +
-                " with cpu:" + cpuCapacity +
-                ", memoryCapacity:" + memoryCapacity+
-                ", networkCapacity:" + networkCapacity;
+    public int compareTo(CloudComputer o) {
+        return new CompareToBuilder().append(getClass().getName(), o.getClass().getName())
+                .append(id, o.id).toComparison();
     }
 
-    public CloudComputer(Long id, int cpuCapacity, int memoryCapacity, int networkCapacity, int cost) {
-        super(id);
-        this.cpuCapacity = cpuCapacity;
-        this.memoryCapacity = memoryCapacity;
-        this.networkCapacity = networkCapacity;
-        this.cost = cost;
-    }
-
-    public CloudComputer(Long id) {
-        super(id);
-    }
-
-    public CloudComputer() {
-    }
 }

@@ -45,11 +45,12 @@ public class CommandLineAppStartupRunner implements CommandLineRunner {
         Iterable<CSVRecord> records = CSVFormat.DEFAULT.withFirstRecordAsHeader().parse(new InputStreamReader(is));
         List<CloudComputer> computers = new ArrayList<>(2);
         for (CSVRecord record : records) {
-            computers.add(new CloudComputer(Long.parseLong(record.get("id")),
-                    Integer.parseInt(record.get("cpu")),
-                    Integer.parseInt(record.get("memory")),
-                    Integer.parseInt(record.get("network")),
-                    Integer.parseInt(record.get("cost"))));
+            computers.add(CloudComputer.builder().id(Long.parseLong(record.get("id")))
+                    .cpuCapacity(Integer.parseInt(record.get("cpu")))
+                    .memoryCapacity(Integer.parseInt(record.get("memory")))
+                    .networkCapacity(Integer.parseInt(record.get("network")))
+                    .cost(Integer.parseInt(record.get("cost")))
+                    .build());
         }
         cloudComputerRepository.saveAll(computers);
 
@@ -57,10 +58,12 @@ public class CommandLineAppStartupRunner implements CommandLineRunner {
         records = CSVFormat.DEFAULT.withFirstRecordAsHeader().parse(new InputStreamReader(is));
         List<CloudProcess> processes = new ArrayList<>(6);
         for (CSVRecord record : records) {
-            processes.add(new CloudProcess(Long.parseLong(record.get("id")),
-                    Integer.parseInt(record.get("cpu")),
-                    Integer.parseInt(record.get("memory")),
-                    Integer.parseInt(record.get("network"))));
+            processes.add(CloudProcess.builder()
+                    .id(Long.parseLong(record.get("id")))
+                    .cpuRequired(Integer.parseInt(record.get("cpu")))
+                    .memoryRequired(Integer.parseInt(record.get("memory")))
+                    .networkRequired(Integer.parseInt(record.get("network")))
+                    .build());
         }
         cloudProcessRepository.saveAll(processes);
 

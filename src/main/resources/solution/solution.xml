@@ -27,9 +27,11 @@
         <!--<moveListFactory>-->
         <!--<moveListFactoryClass>org.optaplanner.examples.nqueens.solver.move.factory.RowChangeMoveFactory</moveListFactoryClass>-->
         <!--</moveListFactory>-->
+        <!--
         <acceptor>
             <entityTabuRatio>0.02</entityTabuRatio>
         </acceptor>
+        -->
         <forager>
             <!-- Real world problems require use of <acceptedCountLimit> -->
         </forager>

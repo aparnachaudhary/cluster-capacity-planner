@@ -14,9 +14,26 @@ public class ScoreConstraintTest {
 
     @Test
     public void testCpuCapacity() {
-        val c1 = new CloudComputer(1L, 10, 100, 1000, 50);
-        val p1 = new CloudProcess(1L, 1, 0, 0, c1);
-        val p2 = new CloudProcess(2L, 10, 0, 0, c1);
+
+        val c1 = CloudComputer.builder()
+                .id(1L)
+                .cpuCapacity(10)
+                .memoryCapacity(100)
+                .networkCapacity(1000)
+                .cost(50)
+                .build();
+
+        val p1 = CloudProcess.builder()
+                .id(1L)
+                .cpuRequired(1)
+                .cloudComputer(c1)
+                .build();
+
+        val p2 = CloudProcess.builder()
+                .id(2L)
+                .cpuRequired(10)
+                .cloudComputer(c1)
+                .build();
 
         val s1 = new CloudBalance(1L, Collections.singletonList(c1), Collections.singletonList(p1));
 
@@ -28,9 +45,26 @@ public class ScoreConstraintTest {
 
     @Test
     public void testMemoryCapacity() {
-        val c1 = new CloudComputer(1L, 10, 100, 1000, 50);
-        val p1 = new CloudProcess(1L, 1, 100, 0, c1);
-        val p2 = new CloudProcess(2L, 10, 10, 0, c1);
+
+        val c1 = CloudComputer.builder()
+                .id(1L)
+                .cpuCapacity(10)
+                .memoryCapacity(100)
+                .networkCapacity(1000)
+                .cost(50)
+                .build();
+
+        val p1 = CloudProcess.builder()
+                .id(1L)
+                .memoryRequired(100)
+                .cloudComputer(c1)
+                .build();
+
+        val p2 = CloudProcess.builder()
+                .id(2L)
+                .memoryRequired(10)
+                .cloudComputer(c1)
+                .build();
 
         val s1 = new CloudBalance(1L, Collections.singletonList(c1), Collections.singletonList(p1));
 
@@ -42,9 +76,26 @@ public class ScoreConstraintTest {
 
     @Test
     public void testNetworkCapacity() {
-        val c1 = new CloudComputer(1L, 10, 100, 1000, 50);
-        val p1 = new CloudProcess(1L, 1, 100, 500, c1);
-        val p2 = new CloudProcess(2L, 10, 10, 1000, c1);
+
+        val c1 = CloudComputer.builder()
+                .id(1L)
+                .cpuCapacity(10)
+                .memoryCapacity(100)
+                .networkCapacity(1000)
+                .cost(50)
+                .build();
+
+        val p1 = CloudProcess.builder()
+                .id(1L)
+                .networkRequired(500)
+                .cloudComputer(c1)
+                .build();
+
+        val p2 = CloudProcess.builder()
+                .id(2L)
+                .networkRequired(1000)
+                .cloudComputer(c1)
+                .build();
 
         val s1 = new CloudBalance(1L, Collections.singletonList(c1), Collections.singletonList(p1));
 
@@ -56,10 +107,38 @@ public class ScoreConstraintTest {
 
     @Test
     public void testCost() {
-        val c1 = new CloudComputer(1L, 10, 100, 1000, 50);
-        val c2 = new CloudComputer(2L, 10, 100, 1000, 500);
-        val p1 = new CloudProcess(1L, 1, 100, 500, c1);
-        val p2 = new CloudProcess(2L, 10, 10, 1000, c2);
+
+        val c1 = CloudComputer.builder()
+                .id(1L)
+                .cpuCapacity(10)
+                .memoryCapacity(100)
+                .networkCapacity(1000)
+                .cost(50)
+                .build();
+
+        val c2 = CloudComputer.builder()
+                .id(2L)
+                .cpuCapacity(10)
+                .memoryCapacity(100)
+                .networkCapacity(1000)
+                .cost(500)
+                .build();
+
+        val p1 = CloudProcess.builder()
+                .id(1L)
+                .cpuRequired(1)
+                .memoryRequired(100)
+                .networkRequired(500)
+                .cloudComputer(c1)
+                .build();
+
+        val p2 = CloudProcess.builder()
+                .id(2L)
+                .cpuRequired(10)
+                .memoryRequired(10)
+                .networkRequired(1000)
+                .cloudComputer(c2)
+                .build();
 
         val s1 = new CloudBalance(1L, Arrays.asList(c1, c2), Collections.singletonList(p1));
 
@@ -71,8 +150,21 @@ public class ScoreConstraintTest {
 
     @Test
     public void testNotAssigned() {
-        val c1 = new CloudComputer(1L, 10, 100, 1000, 50);
-        val p1 = new CloudProcess(1L, 1, 100, 500);
+
+        val c1 = CloudComputer.builder()
+                .id(1L)
+                .cpuCapacity(10)
+                .memoryCapacity(100)
+                .networkCapacity(1000)
+                .cost(50)
+                .build();
+
+        val p1 = CloudProcess.builder()
+                .id(1L)
+                .cpuRequired(1)
+                .memoryRequired(100)
+                .networkRequired(500)
+                .build();
 
         val s1 = new CloudBalance(1L, Collections.singletonList(c1), Collections.singletonList(p1));
         scoreVerifier.assertMediumWeight("Not Assigned", (-1) * p1.getDifficultyIndex(), s1);

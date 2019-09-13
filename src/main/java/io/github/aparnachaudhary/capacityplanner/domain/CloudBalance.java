@@ -21,6 +21,7 @@ import java.util.List;
 @Entity
 @TypeDef(defaultForType = HardMediumSoftScore.class, typeClass = HardMediumSoftScoreHibernateType.class)
 public class CloudBalance extends AbstractEntity {
+    
     @Getter
     @Setter
     @PlanningScore

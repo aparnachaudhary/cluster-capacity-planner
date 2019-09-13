@@ -2,32 +2,37 @@ package io.github.aparnachaudhary.capacityplanner.domain;
 
 import io.github.aparnachaudhary.capacityplanner.extension.ComputerStrengthComparator;
 import io.github.aparnachaudhary.capacityplanner.extension.ProcessDifficultyComparator;
+import lombok.Builder;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.optaplanner.core.api.domain.entity.PlanningEntity;
+import org.optaplanner.core.api.domain.lookup.PlanningId;
 import org.optaplanner.core.api.domain.solution.cloner.DeepPlanningClone;
 import org.optaplanner.core.api.domain.variable.PlanningVariable;
 
 import javax.persistence.Entity;
+import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import java.io.Serializable;
 
 @PlanningEntity(difficultyComparatorClass = ProcessDifficultyComparator.class)
 @Entity
 @DeepPlanningClone
-public class CloudProcess extends AbstractEntity {
+@Data
+@Builder
+public class CloudProcess implements Serializable, Comparable<CloudProcess> {
 
-    @Setter
-    @Getter
+    @PlanningId
+    @Id
+    protected Long id;
+
     private int cpuRequired;
-    @Setter
-    @Getter
     private int memoryRequired;
-    @Setter
-    @Getter
     private int networkRequired;
 
-    @Setter
-    @Getter
+
     @PlanningVariable(valueRangeProviderRefs = "computerProvider", strengthComparatorClass = ComputerStrengthComparator.class, nullable = true)
     @ManyToOne
     private CloudComputer cloudComputer;
@@ -45,25 +50,10 @@ public class CloudProcess extends AbstractEntity {
                 "; Assigned to CloudComputer: " + cloudComputer;
     }
 
-    public CloudProcess(Long id, int cpuRequired, int memoryRequired, int networkRequired) {
-        super(id);
-        this.cpuRequired = cpuRequired;
-        this.memoryRequired = memoryRequired;
-        this.networkRequired = networkRequired;
+    @Override
+    public int compareTo(CloudProcess o) {
+        return new CompareToBuilder().append(getClass().getName(), o.getClass().getName())
+                .append(id, o.id).toComparison();
     }
 
-    public CloudProcess(Long id, int cpuRequired, int memoryRequired, int networkRequired, CloudComputer cloudComputer) {
-        super(id);
-        this.cpuRequired = cpuRequired;
-        this.memoryRequired = memoryRequired;
-        this.networkRequired = networkRequired;
-        this.cloudComputer = cloudComputer;
-    }
-
-    public CloudProcess(Long id) {
-        super(id);
-    }
-
-    public CloudProcess() {
-    }
 }
