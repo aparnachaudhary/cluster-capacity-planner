@@ -6,6 +6,7 @@ import org.apache.commons.lang3.builder.CompareToBuilder;
 import java.util.Comparator;
 
 public class ProcessDifficultyComparator implements Comparator<CloudProcess> {
+
     @Override
     public int compare(CloudProcess o1, CloudProcess o2) {
         return new CompareToBuilder()

@@ -14,21 +14,21 @@ public class CloudBalancingMapBasedEasyScoreCalculator implements EasyScoreCalcu
     public HardMediumSoftScore calculateScore(CloudBalance cloudBalance) {
 
         int computerListSize = cloudBalance.getCloudComputers().size();
-        Map<CloudComputer, Integer> cpuPowerUsageMap = new HashMap<>(computerListSize);
-        Map<CloudComputer, Integer> memoryUsageMap = new HashMap<>(computerListSize);
-        Map<CloudComputer, Integer> networkBandwidthUsageMap = new HashMap<>(computerListSize);
+        Map<CloudComputer, Integer> cpuCapacityUsageMap = new HashMap<>(computerListSize);
+        Map<CloudComputer, Integer> memoryCapacityMap = new HashMap<>(computerListSize);
+        Map<CloudComputer, Integer> diskCapacityUsageMap = new HashMap<>(computerListSize);
 
         for (CloudComputer computer : cloudBalance.getCloudComputers()) {
-            cpuPowerUsageMap.put(computer, 0);
-            memoryUsageMap.put(computer, 0);
-            networkBandwidthUsageMap.put(computer, 0);
+            cpuCapacityUsageMap.put(computer, 0);
+            memoryCapacityMap.put(computer, 0);
+            diskCapacityUsageMap.put(computer, 0);
         }
         Set<CloudComputer> usedComputerSet = new HashSet<>(computerListSize);
 
-        visitProcessList(cpuPowerUsageMap, memoryUsageMap, networkBandwidthUsageMap,
+        visitProcessList(cpuCapacityUsageMap, memoryCapacityMap, diskCapacityUsageMap,
                 usedComputerSet, cloudBalance.getCloudProcesses());
 
-        int hardScore = sumHardScore(cpuPowerUsageMap, memoryUsageMap, networkBandwidthUsageMap);
+        int hardScore = sumHardScore(cpuCapacityUsageMap, memoryCapacityMap, diskCapacityUsageMap);
         int mediumScore = sumMediumScore(cloudBalance.getCloudProcesses());
         int softScore = sumSoftScore(usedComputerSet);
 
@@ -47,7 +47,7 @@ public class CloudBalancingMapBasedEasyScoreCalculator implements EasyScoreCalcu
                 cpuPowerUsageMap.put(computer, cpuPowerUsage);
                 int memoryUsage = memoryUsageMap.get(computer) + process.getMemoryRequired();
                 memoryUsageMap.put(computer, memoryUsage);
-                int networkBandwidthUsage = networkBandwidthUsageMap.get(computer) + process.getNetworkRequired();
+                int networkBandwidthUsage = networkBandwidthUsageMap.get(computer) + process.getDiskRequired();
                 networkBandwidthUsageMap.put(computer, networkBandwidthUsage);
                 usedComputerSet.add(computer);
             }
@@ -73,7 +73,7 @@ public class CloudBalancingMapBasedEasyScoreCalculator implements EasyScoreCalcu
         }
         for (Map.Entry<CloudComputer, Integer> usageEntry : networkBandwidthUsageMap.entrySet()) {
             CloudComputer computer = usageEntry.getKey();
-            int networkBandwidthAvailable = computer.getNetworkCapacity() - usageEntry.getValue();
+            int networkBandwidthAvailable = computer.getDiskCapacity() - usageEntry.getValue();
             if (networkBandwidthAvailable < 0) {
                 hardScore += networkBandwidthAvailable;
             }

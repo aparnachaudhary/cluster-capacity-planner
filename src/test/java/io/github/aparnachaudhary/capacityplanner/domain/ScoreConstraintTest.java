@@ -19,7 +19,7 @@ public class ScoreConstraintTest {
                 .id(1L)
                 .cpuCapacity(10)
                 .memoryCapacity(100)
-                .networkCapacity(1000)
+                .diskCapacity(1000)
                 .cost(50)
                 .build();
 
@@ -54,7 +54,7 @@ public class ScoreConstraintTest {
                 .id(1L)
                 .cpuCapacity(10)
                 .memoryCapacity(100)
-                .networkCapacity(1000)
+                .diskCapacity(1000)
                 .cost(50)
                 .build();
 
@@ -85,25 +85,25 @@ public class ScoreConstraintTest {
     }
 
     @Test
-    public void testNetworkCapacity() {
+    public void testDiskCapacity() {
 
         val c1 = CloudComputer.builder()
                 .id(1L)
                 .cpuCapacity(10)
                 .memoryCapacity(100)
-                .networkCapacity(1000)
+                .diskCapacity(1000)
                 .cost(50)
                 .build();
 
         val p1 = CloudProcess.builder()
                 .id(1L)
-                .networkRequired(500)
+                .diskRequired(500)
                 .cloudComputer(c1)
                 .build();
 
         val p2 = CloudProcess.builder()
                 .id(2L)
-                .networkRequired(1000)
+                .diskRequired(1000)
                 .cloudComputer(c1)
                 .build();
 
@@ -113,10 +113,10 @@ public class ScoreConstraintTest {
                 .cloudProcesses(Collections.singletonList(p1))
                 .build();
 
-        scoreVerifier.assertHardWeight("Network capacity", 0, s1);
+        scoreVerifier.assertHardWeight("Disk capacity", 0, s1);
 
         s1.setCloudProcesses(Arrays.asList(p1, p2));
-        scoreVerifier.assertHardWeight("Network capacity", -500, s1);
+        scoreVerifier.assertHardWeight("Disk capacity", -500, s1);
     }
 
     @Test
@@ -126,7 +126,7 @@ public class ScoreConstraintTest {
                 .id(1L)
                 .cpuCapacity(10)
                 .memoryCapacity(100)
-                .networkCapacity(1000)
+                .diskCapacity(1000)
                 .cost(50)
                 .build();
 
@@ -134,7 +134,7 @@ public class ScoreConstraintTest {
                 .id(2L)
                 .cpuCapacity(10)
                 .memoryCapacity(100)
-                .networkCapacity(1000)
+                .diskCapacity(1000)
                 .cost(500)
                 .build();
 
@@ -142,7 +142,7 @@ public class ScoreConstraintTest {
                 .id(1L)
                 .cpuRequired(1)
                 .memoryRequired(100)
-                .networkRequired(500)
+                .diskRequired(500)
                 .cloudComputer(c1)
                 .build();
 
@@ -150,7 +150,7 @@ public class ScoreConstraintTest {
                 .id(2L)
                 .cpuRequired(10)
                 .memoryRequired(10)
-                .networkRequired(1000)
+                .diskRequired(1000)
                 .cloudComputer(c2)
                 .build();
 
@@ -173,7 +173,7 @@ public class ScoreConstraintTest {
                 .id(1L)
                 .cpuCapacity(10)
                 .memoryCapacity(100)
-                .networkCapacity(1000)
+                .diskCapacity(1000)
                 .cost(50)
                 .build();
 
@@ -181,7 +181,7 @@ public class ScoreConstraintTest {
                 .id(1L)
                 .cpuRequired(1)
                 .memoryRequired(100)
-                .networkRequired(500)
+                .diskRequired(500)
                 .build();
 
         val s1 = CloudBalance.builder()

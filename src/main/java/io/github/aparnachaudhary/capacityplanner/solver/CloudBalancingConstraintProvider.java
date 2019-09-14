@@ -49,11 +49,11 @@ public class CloudBalancingConstraintProvider implements ConstraintProvider {
 
     private Constraint requiredNetworkBandwidthTotal(ConstraintFactory constraintFactory) {
         return constraintFactory.from(CloudProcess.class)
-                .groupBy(CloudProcess::getCloudComputer, sum(CloudProcess::getNetworkRequired))
-                .filter((cloudComputer, networkRequired) -> networkRequired > cloudComputer.getNetworkCapacity())
+                .groupBy(CloudProcess::getCloudComputer, sum(CloudProcess::getDiskRequired))
+                .filter((cloudComputer, networkRequired) -> networkRequired > cloudComputer.getDiskCapacity())
                 .penalize("requiredNetworkBandwidthTotal",
                         HardMediumSoftScore.ONE_MEDIUM,
-                        (cloudComputer, networkRequired) -> networkRequired - cloudComputer.getNetworkCapacity());
+                        (cloudComputer, networkRequired) -> networkRequired - cloudComputer.getDiskCapacity());
     }
 
     // ************************************************************************
@@ -62,11 +62,11 @@ public class CloudBalancingConstraintProvider implements ConstraintProvider {
 
     private Constraint notAssigned(ConstraintFactory constraintFactory) {
         return constraintFactory.from(CloudProcess.class)
-                .groupBy(CloudProcess::getCloudComputer, sum(CloudProcess::getNetworkRequired))
-                .filter((cloudComputer, requiredNetworkBandwidth) -> requiredNetworkBandwidth > cloudComputer.getNetworkCapacity())
+                .groupBy(CloudProcess::getCloudComputer, sum(CloudProcess::getDiskRequired))
+                .filter((cloudComputer, requiredNetworkBandwidth) -> requiredNetworkBandwidth > cloudComputer.getDiskCapacity())
                 .penalize("notAssigned",
                         HardMediumSoftScore.ONE_MEDIUM,
-                        (cloudComputer, requiredNetworkBandwidth) -> requiredNetworkBandwidth - cloudComputer.getNetworkCapacity());
+                        (cloudComputer, requiredNetworkBandwidth) -> requiredNetworkBandwidth - cloudComputer.getDiskCapacity());
     }
 
     // ************************************************************************

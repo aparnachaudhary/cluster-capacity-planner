@@ -6,6 +6,7 @@ import org.apache.commons.lang3.builder.CompareToBuilder;
 import java.util.Comparator;
 
 public class ComputerStrengthComparator implements Comparator<CloudComputer> {
+
     @Override
     public int compare(CloudComputer o1, CloudComputer o2) {
         return new CompareToBuilder()

@@ -31,7 +31,7 @@ public class CloudProcess implements Serializable, Comparable<CloudProcess> {
 
     private int cpuRequired;
     private int memoryRequired;
-    private int networkRequired;
+    private int diskRequired;
     @OneToOne
     private AvailabilityZone availabilityZoneRequired;
     @OneToOne
@@ -42,7 +42,7 @@ public class CloudProcess implements Serializable, Comparable<CloudProcess> {
     private CloudComputer cloudComputer;
 
     public int getDifficultyIndex() {
-        return cpuRequired * memoryRequired * networkRequired;
+        return cpuRequired * memoryRequired * diskRequired;
     }
 
     @Override
@@ -51,7 +51,7 @@ public class CloudProcess implements Serializable, Comparable<CloudProcess> {
         return "CloudProcess - " + id +
                 " with cpuRequired:" + cpuRequired +
                 ", memoryRequired:" + memoryRequired +
-                ", networkRequired:" + networkRequired +
+                ", diskRequired:" + diskRequired +
                 ", availabilityZoneRequired:" + availabilityZoneRequired +
                 ", nodeTypeRequired:" + nodeTypeRequired +
                 "; Assigned to CloudComputer: " + cloudComputer;

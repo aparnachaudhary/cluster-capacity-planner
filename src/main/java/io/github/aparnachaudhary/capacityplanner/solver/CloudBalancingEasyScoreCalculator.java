@@ -28,7 +28,7 @@ public class CloudBalancingEasyScoreCalculator implements EasyScoreCalculator<Cl
                 if (computer.equals(process.getCloudComputer())) {
                     cpuPowerUsage += process.getCpuRequired();
                     memoryUsage += process.getMemoryRequired();
-                    networkBandwidthUsage += process.getNetworkRequired();
+                    networkBandwidthUsage += process.getDiskRequired();
                     used = true;
                 }
             }
@@ -42,7 +42,7 @@ public class CloudBalancingEasyScoreCalculator implements EasyScoreCalculator<Cl
             if (memoryAvailable < 0) {
                 hardScore += memoryAvailable;
             }
-            int networkBandwidthAvailable = computer.getNetworkCapacity() - networkBandwidthUsage;
+            int networkBandwidthAvailable = computer.getDiskCapacity() - networkBandwidthUsage;
             if (networkBandwidthAvailable < 0) {
                 hardScore += networkBandwidthAvailable;
             }

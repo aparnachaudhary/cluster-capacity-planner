@@ -41,18 +41,18 @@ rule "Memory capacity"
         scoreHolder.addHardConstraintMatch(kcontext, $memoryCapacity - $totalUsed);
 end
 
-rule "Network capacity"
+rule "Disk capacity"
     when
         // there is a computer
-        $computer : CloudComputer($networkCapacity : networkCapacity)
-        // with too little NW Capacity for its processes
-        $totalUsed : Integer($totalUsed > $networkCapacity) from accumulate(
-            CloudProcess(cloudComputer == $computer, $networkRequired : networkRequired),
-            sum($networkRequired)
+        $computer : CloudComputer($diskCapacity : diskCapacity)
+        // with too little Disk Capacity for its processes
+        $totalUsed : Integer($totalUsed > $diskCapacity) from accumulate(
+            CloudProcess(cloudComputer == $computer, $diskRequired : diskRequired),
+            sum($diskRequired)
         )
     then
-        // lower hard score by the excessive NW usage
-        scoreHolder.addHardConstraintMatch(kcontext, $networkCapacity - $totalUsed);
+        // lower hard score by the excessive Disk usage
+        scoreHolder.addHardConstraintMatch(kcontext, $diskCapacity - $totalUsed);
 end
 
 // ############################################################################

@@ -25,7 +25,7 @@ public class CloudComputer implements Serializable, Comparable<CloudComputer> {
 
     private int cpuCapacity;
     private int memoryCapacity;
-    private int networkCapacity;
+    private int diskCapacity;
     private int cost;
     @OneToOne
     private AvailabilityZone availabilityZone;
@@ -34,7 +34,7 @@ public class CloudComputer implements Serializable, Comparable<CloudComputer> {
 
 
     public int getDifficultyIndex() {
-        return cpuCapacity * memoryCapacity * networkCapacity;
+        return cpuCapacity * memoryCapacity * diskCapacity;
     }
 
     @Override
@@ -51,7 +51,7 @@ public class CloudComputer implements Serializable, Comparable<CloudComputer> {
         return "[CloudComputer - " + id +
                 " with cpuCapacity:" + cpuCapacity +
                 ", memoryCapacity:" + memoryCapacity +
-                ", networkCapacity:" + networkCapacity +
+                ", diskCapacity:" + diskCapacity +
                 ", availabilityZone:" + availabilityZone +
                 ", nodeType:" + nodeType +
                 ", cost:" + cost + "]";
