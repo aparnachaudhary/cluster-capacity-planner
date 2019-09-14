@@ -27,12 +27,7 @@ public class AvailabilityZone {
 
     @Override
     public String toString() {
-        return "AvailabilityZone - " + id +
-                " with name:" + name;
-    }
-
-    public int cpuCapacity() {
-        return cloudComputers.stream().mapToInt(CloudComputer::getCpuCapacity).sum();
+        return "AZ - " + name;
     }
 
 }

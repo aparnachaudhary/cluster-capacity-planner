@@ -47,10 +47,10 @@ public class CloudComputer implements Serializable, Comparable<CloudComputer> {
     public String toString() {
 
         return "[CloudComputer - " + id +
-                " with cpuCapacity:" + cpuCapacity +
-                ", memoryCapacity:" + memoryCapacity +
-                ", diskCapacity:" + diskCapacity +
-                ", availabilityZone:" + availabilityZone +
+                " with CPU:" + cpuCapacity +
+                ", MEM:" + memoryCapacity +
+                ", DISK:" + diskCapacity +
+                ", AZ:" + availabilityZone +
                 ", nodeType:" + nodeType +
                 ", cost:" + cost + "]";
     }

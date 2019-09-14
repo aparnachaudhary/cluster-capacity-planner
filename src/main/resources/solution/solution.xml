@@ -21,7 +21,12 @@
         <!-- ========================= -->
         <!-- TO USE SIMPLE SCORE CALCULATION -->
         <!-- ========================= -->
-        <easyScoreCalculatorClass>io.github.aparnachaudhary.capacityplanner.solver.CloudBalancingMapBasedEasyScoreCalculator</easyScoreCalculatorClass>
+        <!--<easyScoreCalculatorClass>io.github.aparnachaudhary.capacityplanner.solver.CloudBalancingMapBasedEasyScoreCalculator</easyScoreCalculatorClass>-->
+
+        <!-- ========================= -->
+        <!-- TO USE NODE-TYPE SCORE CALCULATION -->
+        <!-- ========================= -->
+        <easyScoreCalculatorClass>io.github.aparnachaudhary.capacityplanner.solver.CloudCapacityWithNodeTypeScoreCalculator</easyScoreCalculatorClass>
 
         <!-- ========================= -->
         <!-- TO USE SIMPLE SCORE CALCULATION -->

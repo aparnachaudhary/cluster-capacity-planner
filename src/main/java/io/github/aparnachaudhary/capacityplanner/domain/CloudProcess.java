@@ -54,8 +54,8 @@ public class CloudProcess implements Serializable, Comparable<CloudProcess> {
                 " with cpuRequired:" + cpuRequired +
                 ", memoryRequired:" + memoryRequired +
                 ", diskRequired:" + diskRequired +
-                ", availabilityZoneRequired:" + availabilityZoneRequired +
-                ", nodeTypeRequired:" + nodeTypeRequired +
+                ", AZ:" + availabilityZoneRequired +
+                ", nodeType:" + nodeTypeRequired +
                 "; Assigned to CloudComputer: " + cloudComputer;
     }
 

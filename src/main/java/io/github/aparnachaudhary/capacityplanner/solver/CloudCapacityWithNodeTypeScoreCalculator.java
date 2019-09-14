@@ -20,11 +20,6 @@ public class CloudCapacityWithNodeTypeScoreCalculator implements EasyScoreCalcul
         Map<CloudComputer, Integer> memoryUsageMap = new HashMap<>(computerListSize);
         Map<CloudComputer, Integer> diskUsageMap = new HashMap<>(computerListSize);
 
-//        for (NodeType nodeType: cloudBalance.getNodeTypes()){
-//            Map<CloudComputer, Integer> cloudComputerCPUMap = cpuUsageByNodeTypeMap.get(computer.getNodeType());
-//
-//        }
-
         for (CloudComputer computer : cloudBalance.getCloudComputers()) {
             cpuUsageMap.put(computer, 0);
             memoryUsageMap.put(computer, 0);
@@ -39,18 +34,21 @@ public class CloudCapacityWithNodeTypeScoreCalculator implements EasyScoreCalcul
 
         Set<CloudComputer> usedComputerSet = new HashSet<>(computerListSize);
 
-        visitProcessList(cpuUsageMap, memoryUsageMap, diskUsageMap, cpuUsageByNodeTypeMap, usedComputerSet, cloudBalance.getCloudProcesses());
+        visitProcessList(memoryUsageMap, diskUsageMap, cpuUsageByNodeTypeMap, usedComputerSet, cloudBalance.getCloudProcesses());
 
 
-        int hardScore = sumHardScore(cpuUsageMap, memoryUsageMap, diskUsageMap, cpuUsageByNodeTypeMap);
+        int hardScore = sumHardScore(memoryUsageMap, diskUsageMap, cpuUsageByNodeTypeMap);
+
+        // assigned to wrong computer
+        hardScore = wrongNodeTypeAssignment(hardScore, cloudBalance.getCloudProcesses());
+
         int mediumScore = sumMediumScore(cloudBalance.getCloudProcesses());
         int softScore = sumSoftScore(usedComputerSet);
 
         return HardMediumSoftScore.of(hardScore, mediumScore, softScore);
     }
 
-    private void visitProcessList(Map<CloudComputer, Integer> cpuUsageMap,
-                                  Map<CloudComputer, Integer> memoryUsageMap, Map<CloudComputer, Integer> diskUsageMap,
+    private void visitProcessList(Map<CloudComputer, Integer> memoryUsageMap, Map<CloudComputer, Integer> diskUsageMap,
                                   Map<NodeType, Map<CloudComputer, Integer>> cpuUsageByNodeTypeMap, Set<CloudComputer> usedComputerSet,
                                   List<CloudProcess> processList) {
 
@@ -66,10 +64,6 @@ public class CloudCapacityWithNodeTypeScoreCalculator implements EasyScoreCalcul
                     cpuUsageForNodeMap.put(computer, cpuUsageValue);
                     cpuUsageByNodeTypeMap.put(computer.getNodeType(), cpuUsageForNodeMap);
 
-
-//                int cpuPowerUsage = cpuUsageMap.get(computer) + process.getCpuRequired();
-//                cpuUsageMap.put(computer, cpuPowerUsage);
-
                     int memoryUsage = memoryUsageMap.get(computer) + process.getMemoryRequired();
                     memoryUsageMap.put(computer, memoryUsage);
 
@@ -83,12 +77,28 @@ public class CloudCapacityWithNodeTypeScoreCalculator implements EasyScoreCalcul
 
     }
 
-    private int sumHardScore(Map<CloudComputer, Integer> cpuUsageMap, Map<CloudComputer, Integer> memoryUsageMap,
+    private int sumHardScore(Map<CloudComputer, Integer> memoryUsageMap,
                              Map<CloudComputer, Integer> diskUsageMap, Map<NodeType, Map<CloudComputer, Integer>> cpuUsageByNodeTypeMap) {
 
         int hardScore = 0;
 
+        // Assignment exceeds CPU capacity
+        hardScore = hardScoreCpuCapacity(cpuUsageByNodeTypeMap, hardScore);
+
+        // Assignment exceeds MEM capacity
+//        hardScore = hardScoreMemoryCapacity(memoryUsageMap, hardScore);
+
+        // Assignment exceeds disk capacity
+//        hardScore = hardScoreDiskCapacity(diskUsageMap, hardScore);
+
+
+        return hardScore;
+    }
+
+    private int hardScoreCpuCapacity(Map<NodeType, Map<CloudComputer, Integer>> cpuUsageByNodeTypeMap, int hardScore) {
+
         for (Map.Entry<NodeType, Map<CloudComputer, Integer>> usageEntry : cpuUsageByNodeTypeMap.entrySet()) {
+
             NodeType nodeType = usageEntry.getKey();
             Map<CloudComputer, Integer> nodeTypeCpuUsageMap = usageEntry.getValue();
             int nodeTypeCpuCapacity = nodeTypeCpuUsageMap.keySet().stream()
@@ -96,28 +106,27 @@ public class CloudCapacityWithNodeTypeScoreCalculator implements EasyScoreCalcul
                     .mapToInt(CloudComputer::getCpuCapacity)
                     .sum();
 
-            int nodeTypeCpuUsage = 0;
-            for (Map.Entry<CloudComputer, Integer> entry : nodeTypeCpuUsageMap.entrySet()) {
-                if (entry.getKey().getNodeType().equals(nodeType)) {
-                    nodeTypeCpuUsage += entry.getValue();
-                }
-            }
+            // Per Computer CPU Capacity
+            hardScore += nodeTypeCpuUsageMap.entrySet().stream()
+                    .mapToInt(entry -> entry.getKey().getCpuCapacity() - entry.getValue())
+                    .filter(cpuPowerAvailable -> cpuPowerAvailable < 0)
+                    .sum();
 
-//            System.err.println("NodeType=" + nodeType.getName() + " CPUCapacity=" + nodeTypeCpuCapacity + " CPUUsage=" + nodeTypeCpuUsage);
+            // Per Node Type CPU Capacity
+            int nodeTypeCpuUsage = nodeTypeCpuUsageMap.entrySet().stream()
+                    .filter(entry -> entry.getKey().getNodeType().equals(nodeType))
+                    .mapToInt(Map.Entry::getValue)
+                    .sum();
+
             int nodeTypeCpuAvailable = nodeTypeCpuCapacity - nodeTypeCpuUsage;
             if (nodeTypeCpuAvailable < 0) {
                 hardScore += nodeTypeCpuAvailable;
             }
         }
+        return hardScore;
+    }
 
-
-//        for (Map.Entry<CloudComputer, Integer> usageEntry : cpuUsageMap.entrySet()) {
-//            CloudComputer computer = usageEntry.getKey();
-//            int cpuPowerAvailable = computer.getCpuCapacity() - usageEntry.getValue();
-//            if (cpuPowerAvailable < 0) {
-//                hardScore += cpuPowerAvailable;
-//            }
-//        }
+    private int hardScoreMemoryCapacity(Map<CloudComputer, Integer> memoryUsageMap, int hardScore) {
 
         for (Map.Entry<CloudComputer, Integer> usageEntry : memoryUsageMap.entrySet()) {
             CloudComputer computer = usageEntry.getKey();
@@ -126,6 +135,11 @@ public class CloudCapacityWithNodeTypeScoreCalculator implements EasyScoreCalcul
                 hardScore += memoryAvailable;
             }
         }
+        return hardScore;
+    }
+
+    private int hardScoreDiskCapacity(Map<CloudComputer, Integer> diskUsageMap, int hardScore) {
+
         for (Map.Entry<CloudComputer, Integer> usageEntry : diskUsageMap.entrySet()) {
             CloudComputer computer = usageEntry.getKey();
             int diskAvailable = computer.getDiskCapacity() - usageEntry.getValue();
@@ -133,15 +147,29 @@ public class CloudCapacityWithNodeTypeScoreCalculator implements EasyScoreCalcul
                 hardScore += diskAvailable;
             }
         }
-
-
         return hardScore;
     }
 
     private int sumMediumScore(List<CloudProcess> processSet) {
+
         int mediumScore = 0;
+
         for (CloudProcess cloudProcess : processSet) {
+
+            // not assigned to any computer
             if (cloudProcess.getCloudComputer() == null) {
+                mediumScore -= cloudProcess.getDifficultyIndex();
+            }
+
+        }
+
+        return mediumScore;
+    }
+
+    private int wrongNodeTypeAssignment(int mediumScore, List<CloudProcess> processSet) {
+
+        for (CloudProcess cloudProcess : processSet) {
+            if (cloudProcess.getCloudComputer() != null && !cloudProcess.getNodeTypeRequired().equals(cloudProcess.getCloudComputer().getNodeType())) {
                 mediumScore -= cloudProcess.getDifficultyIndex();
             }
         }
@@ -149,6 +177,7 @@ public class CloudCapacityWithNodeTypeScoreCalculator implements EasyScoreCalcul
     }
 
     private int sumSoftScore(Set<CloudComputer> usedComputerSet) {
+
         int softScore = 0;
         for (CloudComputer usedComputer : usedComputerSet) {
             softScore -= usedComputer.getCost();

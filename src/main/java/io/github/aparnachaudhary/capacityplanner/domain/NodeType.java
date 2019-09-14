@@ -19,16 +19,10 @@ public class NodeType {
 
     private String name;
 
-//    @OneToMany
-//    private List<CloudComputer> cloudComputers;
-
     @Override
     public String toString() {
-        return "NodeType - " + id +
-                " with name:" + name;
+        return "NodeType - " + name;
     }
 
-//    public int getCpuCapacity() {
-//        return cloudComputers.stream().mapToInt(CloudComputer::getCpuCapacity).sum();
-//    }
+
 }
