@@ -36,15 +36,17 @@ public class CloudCapacityWithNodeTypeScoreCalculator implements EasyScoreCalcul
 
 
         int hardScore = 0;
+        int mediumScore = 0;
+        int softScore = 0;
 
         // Assignment exceeds CPU capacity
-        hardScore += hardScoreCpuCapacity(cpuUsageByNodeTypeMap);
-
-        // assigned to wrong computer
-        hardScore = wrongNodeTypeAssignment(hardScore, cloudBalance.getCloudProcesses());
-
-        int mediumScore = sumMediumScore(cloudBalance.getCloudProcesses());
-        int softScore = sumSoftScore(usedComputerSet);
+        hardScore += cpuUsageExceedsCapacityScore(cpuUsageByNodeTypeMap);
+        // Assigned to Wrong Computer
+        hardScore += wrongNodeTypeAssignment(cloudBalance.getCloudProcesses());
+        // Not Assigned to Any Computer
+        mediumScore += notAssignedToComputer(cloudBalance.getCloudProcesses());
+        // Cost incurred based on Computers Used
+        softScore += usedComputerCostScore(usedComputerSet);
 
         return HardMediumSoftScore.of(hardScore, mediumScore, softScore);
     }
@@ -78,7 +80,7 @@ public class CloudCapacityWithNodeTypeScoreCalculator implements EasyScoreCalcul
 
     }
 
-    private int hardScoreCpuCapacity(Map<NodeType, Map<CloudComputer, Integer>> cpuUsageByNodeTypeMap) {
+    private int cpuUsageExceedsCapacityScore(Map<NodeType, Map<CloudComputer, Integer>> cpuUsageByNodeTypeMap) {
 
         int hardScore = 0;
 
@@ -135,38 +137,39 @@ public class CloudCapacityWithNodeTypeScoreCalculator implements EasyScoreCalcul
         return hardScore;
     }
 
-    private int sumMediumScore(List<CloudProcess> processSet) {
+    private int notAssignedToComputer(List<CloudProcess> processSet) {
 
-        int mediumScore = 0;
+        int score = 0;
 
         for (CloudProcess cloudProcess : processSet) {
-
             // not assigned to any computer
             if (cloudProcess.getCloudComputer() == null) {
-                mediumScore -= cloudProcess.getDifficultyIndex();
+                score -= cloudProcess.getDifficultyIndex();
             }
 
         }
 
-        return mediumScore;
+        return score;
     }
 
-    private int wrongNodeTypeAssignment(int mediumScore, List<CloudProcess> processSet) {
+    private int wrongNodeTypeAssignment(List<CloudProcess> processSet) {
+
+        int score = 0;
 
         for (CloudProcess cloudProcess : processSet) {
             if (cloudProcess.getCloudComputer() != null && !cloudProcess.getNodeTypeRequired().equals(cloudProcess.getCloudComputer().getNodeType())) {
-                mediumScore -= cloudProcess.getDifficultyIndex();
+                score -= cloudProcess.getDifficultyIndex();
             }
         }
-        return mediumScore;
+        return score;
     }
 
-    private int sumSoftScore(Set<CloudComputer> usedComputerSet) {
+    private int usedComputerCostScore(Set<CloudComputer> usedComputerSet) {
 
-        int softScore = 0;
+        int score = 0;
         for (CloudComputer usedComputer : usedComputerSet) {
-            softScore -= usedComputer.getCost();
+            score -= usedComputer.getCost();
         }
-        return softScore;
+        return score;
     }
 }
