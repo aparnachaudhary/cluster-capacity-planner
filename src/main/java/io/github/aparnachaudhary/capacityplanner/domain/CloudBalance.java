@@ -33,8 +33,8 @@ public class CloudBalance implements Serializable, Comparable<CloudBalance> {
 
     @PlanningEntityCollectionProperty
     private List<CloudProcess> cloudProcesses;
-//    private List<NodeType> nodeTypes;
-//    private List<AvailabilityZone> availabilityZones;
+    private List<AvailabilityZone> availabilityZones;
+    private List<NodeType> nodeTypes;
 
 
     @Override

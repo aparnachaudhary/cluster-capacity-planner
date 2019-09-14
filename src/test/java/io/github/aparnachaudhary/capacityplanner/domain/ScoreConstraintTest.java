@@ -74,6 +74,8 @@ public class ScoreConstraintTest {
                 .id(1L)
                 .cloudComputers(Collections.singletonList(c1))
                 .cloudProcesses(Collections.singletonList(p1))
+                .availabilityZones(Collections.emptyList())
+                .nodeTypes(Collections.emptyList())
                 .build();
 
         scoreVerifier.assertHardWeight("Memory capacity", 0, s1);

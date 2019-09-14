@@ -15,34 +15,43 @@ global HardMediumSoftScoreHolder scoreHolder;
 
 rule "CPU capacity"
     when
+        // there is a computer
         $computer : CloudComputer($cpuCapacity : cpuCapacity)
+        // with too little cpu for its processes
         $totalUsed : Integer($totalUsed > $cpuCapacity) from accumulate(
             CloudProcess(cloudComputer == $computer, $cpuRequired : cpuRequired),
             sum($cpuRequired)
         )
     then
+        // lower hard score by the excessive CPU usage
         scoreHolder.addHardConstraintMatch(kcontext, $cpuCapacity - $totalUsed);
 end
 
 rule "Memory capacity"
     when
+        // there is a computer
         $computer : CloudComputer($memoryCapacity : memoryCapacity)
+        // with too little memory for its processes
         $totalUsed : Integer($totalUsed > $memoryCapacity) from accumulate(
             CloudProcess(cloudComputer == $computer, $memoryRequired : memoryRequired),
             sum($memoryRequired)
         )
     then
+        // lower hard score by the excessive MEM usage
         scoreHolder.addHardConstraintMatch(kcontext, $memoryCapacity - $totalUsed);
 end
 
 rule "Network capacity"
     when
+        // there is a computer
         $computer : CloudComputer($networkCapacity : networkCapacity)
+        // with too little NW Capacity for its processes
         $totalUsed : Integer($totalUsed > $networkCapacity) from accumulate(
             CloudProcess(cloudComputer == $computer, $networkRequired : networkRequired),
             sum($networkRequired)
         )
     then
+        // lower hard score by the excessive NW usage
         scoreHolder.addHardConstraintMatch(kcontext, $networkCapacity - $totalUsed);
 end
 
@@ -52,8 +61,10 @@ end
 
 rule "Not Assigned"
     when
+        // there is a process which does not have computer assigned
         CloudProcess($weightIndex : getDifficultyIndex(), cloudComputer == null)
     then
+        // lower medium score by the unassigned resources of the process
         scoreHolder.addMediumConstraintMatch(kcontext, -$weightIndex);
 end
 

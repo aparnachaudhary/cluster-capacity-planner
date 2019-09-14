@@ -7,6 +7,8 @@ import org.optaplanner.core.api.domain.solution.cloner.DeepPlanningClone;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Transient;
+import java.util.List;
 
 @Entity
 @DeepPlanningClone
@@ -20,9 +22,17 @@ public class AvailabilityZone {
 
     private String name;
 
+    @Transient
+    private List<CloudComputer> cloudComputers;
+
     @Override
     public String toString() {
         return "AvailabilityZone - " + id +
                 " with name:" + name;
     }
+
+    public int cpuCapacity() {
+        return cloudComputers.stream().mapToInt(CloudComputer::getCpuCapacity).sum();
+    }
+
 }

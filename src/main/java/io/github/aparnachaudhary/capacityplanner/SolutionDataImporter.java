@@ -45,8 +45,8 @@ public class SolutionDataImporter implements ApplicationRunner {
     @Override
     public void run(ApplicationArguments applicationArguments) throws Exception {
 
-        List<NodeType> nodeTypes = fetchAndSaveCloudNodeTypes();
         List<AvailabilityZone> availabilityZones = fetchAndSaveCloudAvailabilityZones();
+        List<NodeType> nodeTypes = fetchAndSaveCloudNodeTypes();
         List<CloudComputer> computers = fetchAndSaveCloudComputers();
         List<CloudProcess> processes = fetchAndSaveCloudProcesses();
 
@@ -54,6 +54,8 @@ public class SolutionDataImporter implements ApplicationRunner {
                 .id(0L)
                 .cloudComputers(computers)
                 .cloudProcesses(processes)
+                .availabilityZones(availabilityZones)
+                .nodeTypes(nodeTypes)
                 .build();
 
         InputStream cloudSolutionStream = this.getClass().getResourceAsStream("/solution/solution.xml");
@@ -108,17 +110,12 @@ public class SolutionDataImporter implements ApplicationRunner {
         return computers;
     }
 
-    private List<NodeType> fetchAndSaveCloudNodeTypes() throws IOException {
+    private List<NodeType> fetchAndSaveCloudNodeTypes() {
 
-        InputStream is = this.getClass().getResourceAsStream("/data/nodetype-value/nodetype-3.csv");
-        Iterable<CSVRecord> records = CSVFormat.DEFAULT.withFirstRecordAsHeader().parse(new InputStreamReader(is));
         List<NodeType> nodeTypes = new ArrayList<>(2);
-        for (CSVRecord record : records) {
-            nodeTypes.add(NodeType.builder()
-                    .id(Long.parseLong(record.get("id")))
-                    .name(record.get("name"))
-                    .build());
-        }
+        nodeTypes.add(NodeType.builder().id(0L).name("COMPUTE").build());
+        nodeTypes.add(NodeType.builder().id(1L).name("EDGE").build());
+        nodeTypes.add(NodeType.builder().id(2L).name("STORAGE").build());
         nodeTypeRepository.saveAll(nodeTypes);
         return nodeTypes;
     }

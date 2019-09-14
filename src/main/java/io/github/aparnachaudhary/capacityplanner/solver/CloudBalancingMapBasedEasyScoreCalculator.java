@@ -17,6 +17,7 @@ public class CloudBalancingMapBasedEasyScoreCalculator implements EasyScoreCalcu
         Map<CloudComputer, Integer> cpuPowerUsageMap = new HashMap<>(computerListSize);
         Map<CloudComputer, Integer> memoryUsageMap = new HashMap<>(computerListSize);
         Map<CloudComputer, Integer> networkBandwidthUsageMap = new HashMap<>(computerListSize);
+
         for (CloudComputer computer : cloudBalance.getCloudComputers()) {
             cpuPowerUsageMap.put(computer, 0);
             memoryUsageMap.put(computer, 0);
