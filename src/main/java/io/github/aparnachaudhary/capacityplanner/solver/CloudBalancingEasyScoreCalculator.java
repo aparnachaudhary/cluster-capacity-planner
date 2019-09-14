@@ -17,24 +17,25 @@ public class CloudBalancingEasyScoreCalculator implements EasyScoreCalculator<Cl
 
         int hardScore = 0;
         int softScore = 0;
+
         for (CloudComputer computer : cloudBalance.getCloudComputers()) {
-            int cpuPowerUsage = 0;
+            int cpuCapacityUsage = 0;
             int memoryUsage = 0;
-            int networkBandwidthUsage = 0;
+            int diskUsage = 0;
             boolean used = false;
 
             // Calculate usage
             for (CloudProcess process : cloudBalance.getCloudProcesses()) {
                 if (computer.equals(process.getCloudComputer())) {
-                    cpuPowerUsage += process.getCpuRequired();
+                    cpuCapacityUsage += process.getCpuRequired();
                     memoryUsage += process.getMemoryRequired();
-                    networkBandwidthUsage += process.getDiskRequired();
+                    diskUsage += process.getDiskRequired();
                     used = true;
                 }
             }
 
             // Hard constraints
-            int cpuPowerAvailable = computer.getCpuCapacity() - cpuPowerUsage;
+            int cpuPowerAvailable = computer.getCpuCapacity() - cpuCapacityUsage;
             if (cpuPowerAvailable < 0) {
                 hardScore += cpuPowerAvailable;
             }
@@ -42,9 +43,9 @@ public class CloudBalancingEasyScoreCalculator implements EasyScoreCalculator<Cl
             if (memoryAvailable < 0) {
                 hardScore += memoryAvailable;
             }
-            int networkBandwidthAvailable = computer.getDiskCapacity() - networkBandwidthUsage;
-            if (networkBandwidthAvailable < 0) {
-                hardScore += networkBandwidthAvailable;
+            int diskAvailable = computer.getDiskCapacity() - diskUsage;
+            if (diskAvailable < 0) {
+                hardScore += diskAvailable;
             }
 
             // Soft constraints

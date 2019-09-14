@@ -20,7 +20,7 @@ public class CloudBalancingConstraintProvider implements ConstraintProvider {
         return new Constraint[]{
                 requiredCpuPowerTotal(constraintFactory),
                 requiredMemoryTotal(constraintFactory),
-                requiredNetworkBandwidthTotal(constraintFactory),
+                requiredDiskUsageTotal(constraintFactory),
                 computerCost(constraintFactory)
         };
     }
@@ -47,13 +47,13 @@ public class CloudBalancingConstraintProvider implements ConstraintProvider {
                         (cloudComputer, memoryRequired) -> memoryRequired - cloudComputer.getMemoryCapacity());
     }
 
-    private Constraint requiredNetworkBandwidthTotal(ConstraintFactory constraintFactory) {
+    private Constraint requiredDiskUsageTotal(ConstraintFactory constraintFactory) {
         return constraintFactory.from(CloudProcess.class)
                 .groupBy(CloudProcess::getCloudComputer, sum(CloudProcess::getDiskRequired))
-                .filter((cloudComputer, networkRequired) -> networkRequired > cloudComputer.getDiskCapacity())
-                .penalize("requiredNetworkBandwidthTotal",
+                .filter((cloudComputer, diskRequired) -> diskRequired > cloudComputer.getDiskCapacity())
+                .penalize("requiredDiskUsageTotal",
                         HardMediumSoftScore.ONE_MEDIUM,
-                        (cloudComputer, networkRequired) -> networkRequired - cloudComputer.getDiskCapacity());
+                        (cloudComputer, diskRequired) -> diskRequired - cloudComputer.getDiskCapacity());
     }
 
     // ************************************************************************
@@ -63,10 +63,10 @@ public class CloudBalancingConstraintProvider implements ConstraintProvider {
     private Constraint notAssigned(ConstraintFactory constraintFactory) {
         return constraintFactory.from(CloudProcess.class)
                 .groupBy(CloudProcess::getCloudComputer, sum(CloudProcess::getDiskRequired))
-                .filter((cloudComputer, requiredNetworkBandwidth) -> requiredNetworkBandwidth > cloudComputer.getDiskCapacity())
+                .filter((cloudComputer, diskRequired) -> diskRequired > cloudComputer.getDiskCapacity())
                 .penalize("notAssigned",
                         HardMediumSoftScore.ONE_MEDIUM,
-                        (cloudComputer, requiredNetworkBandwidth) -> requiredNetworkBandwidth - cloudComputer.getDiskCapacity());
+                        (cloudComputer, diskRequired) -> diskRequired - cloudComputer.getDiskCapacity());
     }
 
     // ************************************************************************

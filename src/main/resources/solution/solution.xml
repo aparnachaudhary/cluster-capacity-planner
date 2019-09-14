@@ -21,7 +21,7 @@
         <!-- ========================= -->
         <!-- TO USE SIMPLE SCORE CALCULATION -->
         <!-- ========================= -->
-        <!--<easyScoreCalculatorClass>io.github.aparnachaudhary.capacityplanner.solver.CloudBalancingMapBasedEasyScoreCalculator</easyScoreCalculatorClass>-->
+        <easyScoreCalculatorClass>io.github.aparnachaudhary.capacityplanner.solver.CloudBalancingMapBasedEasyScoreCalculator</easyScoreCalculatorClass>
 
         <!-- ========================= -->
         <!-- TO USE SIMPLE SCORE CALCULATION -->
@@ -38,7 +38,7 @@
         <!-- TO PURPOSE? -->
         <!-- ========================= -->
         <!--<assertionScoreDirectorFactory>-->
-        <easyScoreCalculatorClass>io.github.aparnachaudhary.capacityplanner.solver.CloudBalancingMapBasedEasyScoreCalculator</easyScoreCalculatorClass>
+        <!--<easyScoreCalculatorClass>io.github.aparnachaudhary.capacityplanner.solver.CloudBalancingMapBasedEasyScoreCalculator</easyScoreCalculatorClass>-->
         <!--</assertionScoreDirectorFactory>-->
 
         <!-- ========================= -->

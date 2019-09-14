@@ -6,9 +6,7 @@ import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.optaplanner.core.api.domain.lookup.PlanningId;
 import org.optaplanner.core.api.domain.solution.cloner.DeepPlanningClone;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.OneToOne;
+import javax.persistence.*;
 import java.io.Serializable;
 
 @Entity
@@ -27,9 +25,9 @@ public class CloudComputer implements Serializable, Comparable<CloudComputer> {
     private int memoryCapacity;
     private int diskCapacity;
     private int cost;
-    @OneToOne
+    @ManyToOne
     private AvailabilityZone availabilityZone;
-    @OneToOne
+    @ManyToOne
     private NodeType nodeType;
 
 

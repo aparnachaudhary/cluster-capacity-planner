@@ -32,8 +32,10 @@ public class CloudProcess implements Serializable, Comparable<CloudProcess> {
     private int cpuRequired;
     private int memoryRequired;
     private int diskRequired;
+
     @OneToOne
     private AvailabilityZone availabilityZoneRequired;
+
     @OneToOne
     private NodeType nodeTypeRequired;
 

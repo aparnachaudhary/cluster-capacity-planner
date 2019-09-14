@@ -82,12 +82,14 @@ public class SolutionDataImporter implements ApplicationRunner {
                     .cpuRequired(Integer.parseInt(record.get("cpu")))
                     .memoryRequired(Integer.parseInt(record.get("memory")))
                     .diskRequired(Integer.parseInt(record.get("disk")))
-                    .availabilityZoneRequired(AvailabilityZone.builder().id(Long.parseLong(record.get("availabilityZone"))).build())
-                    .nodeTypeRequired(NodeType.builder().id(Long.parseLong(record.get("nodeType"))).build())
+                    .availabilityZoneRequired(availabilityZoneRepository.findById(Long.parseLong(record.get("availabilityZone"))).get())
+                    .nodeTypeRequired(nodeTypeRepository.findById(Long.parseLong(record.get("nodeType"))).get())
                     .build());
         }
         cloudProcessRepository.saveAll(processes);
-        return processes;
+        List<CloudProcess> resultList = new ArrayList<>();
+        cloudProcessRepository.findAll().iterator().forEachRemaining(resultList::add);
+        return resultList;
     }
 
     private List<CloudComputer> fetchAndSaveCloudComputers() throws IOException {
@@ -101,13 +103,15 @@ public class SolutionDataImporter implements ApplicationRunner {
                     .cpuCapacity(Integer.parseInt(record.get("cpu")))
                     .memoryCapacity(Integer.parseInt(record.get("memory")))
                     .diskCapacity(Integer.parseInt(record.get("disk")))
-                    .availabilityZone(AvailabilityZone.builder().id(Long.parseLong(record.get("availabilityZone"))).build())
-                    .nodeType(NodeType.builder().id(Long.parseLong(record.get("nodeType"))).build())
+                    .availabilityZone(availabilityZoneRepository.findById(Long.parseLong(record.get("availabilityZone"))).get())
+                    .nodeType(nodeTypeRepository.findById(Long.parseLong(record.get("nodeType"))).get())
                     .cost(Integer.parseInt(record.get("cost")))
                     .build());
         }
         cloudComputerRepository.saveAll(computers);
-        return computers;
+        List<CloudComputer> resultList = new ArrayList<>();
+        cloudComputerRepository.findAll().iterator().forEachRemaining(resultList::add);
+        return resultList;
     }
 
     private List<NodeType> fetchAndSaveCloudNodeTypes() {
@@ -117,7 +121,9 @@ public class SolutionDataImporter implements ApplicationRunner {
         nodeTypes.add(NodeType.builder().id(1L).name("EDGE").build());
         nodeTypes.add(NodeType.builder().id(2L).name("STORAGE").build());
         nodeTypeRepository.saveAll(nodeTypes);
-        return nodeTypes;
+        List<NodeType> resultList = new ArrayList<>();
+        nodeTypeRepository.findAll().iterator().forEachRemaining(resultList::add);
+        return resultList;
     }
 
     private List<AvailabilityZone> fetchAndSaveCloudAvailabilityZones() {
@@ -127,6 +133,9 @@ public class SolutionDataImporter implements ApplicationRunner {
         availabilityZones.add(AvailabilityZone.builder().id(1L).name("Zone2").build());
         availabilityZones.add(AvailabilityZone.builder().id(2L).name("Zone3").build());
         availabilityZoneRepository.saveAll(availabilityZones);
-        return availabilityZones;
+
+        List<AvailabilityZone> resultList = new ArrayList<>();
+        availabilityZoneRepository.findAll().iterator().forEachRemaining(resultList::add);
+        return resultList;
     }
 }
