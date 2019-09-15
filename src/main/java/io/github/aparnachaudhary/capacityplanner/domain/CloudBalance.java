@@ -13,7 +13,9 @@ import org.optaplanner.core.api.score.buildin.hardmediumsoft.HardMediumSoftScore
 
 import javax.persistence.Id;
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @PlanningSolution
 @Data
@@ -46,5 +48,21 @@ public class CloudBalance implements Serializable, Comparable<CloudBalance> {
     @Override
     public String toString() {
         return getClass().getName().replaceAll(".*\\.", "") + "-" + id;
+    }
+
+    public Map<AvailabilityZone, Map<NodeType, CloudComputer>> getComputersByAZAndNodeType() {
+
+        Map<AvailabilityZone, Map<NodeType, CloudComputer>> computersByAZAndNodeType = new HashMap<>(availabilityZones.size());
+
+        for (AvailabilityZone availabilityZone : availabilityZones) {
+            computersByAZAndNodeType.put(availabilityZone, new HashMap<>(nodeTypes.size()));
+        }
+
+
+        for (CloudComputer computer : cloudComputers) {
+            Map<NodeType, CloudComputer> computersByNodeType = computersByAZAndNodeType.get(computer.getAvailabilityZone());
+            computersByNodeType.put(computer.getNodeType(), computer);
+        }
+        return computersByAZAndNodeType;
     }
 }

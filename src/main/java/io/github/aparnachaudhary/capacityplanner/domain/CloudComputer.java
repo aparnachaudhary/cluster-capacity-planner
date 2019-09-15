@@ -30,7 +30,6 @@ public class CloudComputer implements Serializable, Comparable<CloudComputer> {
     @ManyToOne
     private NodeType nodeType;
 
-
     public int getDifficultyIndex() {
         return cpuCapacity * memoryCapacity * diskCapacity;
     }
@@ -54,5 +53,6 @@ public class CloudComputer implements Serializable, Comparable<CloudComputer> {
                 ", nodeType:" + nodeType +
                 ", cost:" + cost + "]";
     }
+
 
 }

@@ -59,9 +59,7 @@
 
     <!-- Configure the optimization algorithms (optional) -->
     <termination>
-        <!--
-        <bestScoreLimit>0hard/-50000soft</bestScoreLimit>
-        -->
+        <!--<bestScoreLimit>0hard/999medium/999soft</bestScoreLimit>-->
         <secondsSpentLimit>30</secondsSpentLimit>
     </termination>
 
