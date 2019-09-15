@@ -47,12 +47,12 @@ public class SolutionDataImporter implements ApplicationRunner {
 
         List<AvailabilityZone> availabilityZones = fetchAndSaveCloudAvailabilityZones();
         List<ClusterNodeType> nodeTypes = fetchAndSaveCloudNodeTypes();
-        List<ClusterNode> computers = fetchAndSaveClusterNodes();
+        List<ClusterNode> clusterNodes = fetchAndSaveClusterNodes();
         List<ClusterProcess> processes = fetchAndSaveClusterProcesses();
 
         val initSolution = ClusterBalance.builder()
                 .id(0L)
-                .clusterNodes(computers)
+                .clusterNodes(clusterNodes)
                 .clusterProcesses(processes)
                 .availabilityZones(availabilityZones)
                 .nodeTypes(nodeTypes)

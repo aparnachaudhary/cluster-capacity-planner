@@ -24,10 +24,8 @@ public class CloudCapacityScoreCalculator implements EasyScoreCalculator<Cluster
         int mediumScore = 0;
         int softScore = 0;
 
-        // Per AZ CPU Capacity And Usage
-        hardScore += cpuUsageAvailabilityZoneScore(resourceCapacity);
-        // Per ClusterNodeType CPU Capacity And Usage
-        hardScore += cpuUsageNodeTypeScore(resourceCapacity);
+        // Per AZ/NodeType/Node Resource Capacity And Usage
+        hardScore += resourceAllocationScore(resourceCapacity);
         // Per ClusterNode CPU Capacity And Usage
         hardScore += cpuUsageClusterNodeScore(resourceCapacity.getNodeResourceUsageMap());
         // Assigned to Wrong ClusterNodeType
@@ -74,60 +72,48 @@ public class CloudCapacityScoreCalculator implements EasyScoreCalculator<Cluster
 
     }
 
-    private int cpuUsageAvailabilityZoneScore(ClusterUtilization resourceCapacity) {
+    private int resourceAllocationScore(ClusterUtilization clusterUtilization) {
 
-        int hardScore = 0;
+        int score = 0;
 
-        Map<AvailabilityZone, ResourceCapacity> azResourceCapacityMap = resourceCapacity.getAzResourceCapacityMap();
-        Map<AvailabilityZone, ResourceUsage> azResourceUsageMap = resourceCapacity.getAzResourceUsageMap();
-        Map<ClusterNode, ResourceUsage> nodeUsageMap = resourceCapacity.getNodeResourceUsageMap();
+        for (Map.Entry<ClusterNode, ResourceUsage> usageEntry : clusterUtilization.getNodeResourceUsageMap().entrySet()) {
 
-
-        for (ClusterNode clusterNode : nodeUsageMap.keySet()) {
+            ClusterNode clusterNode = usageEntry.getKey();
+            ResourceUsage clusterNodeResourceCapacity = usageEntry.getValue();
 
             AvailabilityZone availabilityZone = clusterNode.getAvailabilityZone();
-            // Per AZ CPU Usage
-            ResourceUsage resourceUsage = azResourceUsageMap.get(availabilityZone);
-            int azCpuUsage = resourceUsage.getCpuUsage() + nodeUsageMap.get(clusterNode).getCpuUsage();
-            resourceUsage.setCpuUsage(azCpuUsage);
-            // Per AZ CPU Capacity
-            int azCpuCapacity = azResourceCapacityMap.get(availabilityZone).getCpuCapacity();
-            // Per AZ CPU Capacity And Usage
-            int azCpuAvailable = azCpuCapacity - azCpuUsage;
-            if (azCpuAvailable < 0) {
-                hardScore += azCpuAvailable;
-            }
-        }
-
-        return hardScore;
-    }
-
-    private int cpuUsageNodeTypeScore(ClusterUtilization resourceCapacity) {
-
-        int hardScore = 0;
-
-        Map<ClusterNodeType, ResourceCapacity> nodeTypeResourceCapacityMap = resourceCapacity.getNodeTypeResourceCapacityMap();
-        Map<ClusterNodeType, ResourceUsage> nodeTypeResourceUsageMap = resourceCapacity.getNodeTypeResourceUsageMap();
-        Map<ClusterNode, ResourceUsage> nodeUsageMap = resourceCapacity.getNodeResourceUsageMap();
-
-
-        for (ClusterNode clusterNode : nodeUsageMap.keySet()) {
-
             ClusterNodeType nodeType = clusterNode.getClusterNodeType();
-            // Per ClusterNodeType CPU Usage
-            ResourceUsage resourceUsage = nodeTypeResourceUsageMap.get(nodeType);
-            int nodeTypeCpuUsage = resourceUsage.getCpuUsage() + nodeUsageMap.get(clusterNode).getCpuUsage();
-            resourceUsage.setCpuUsage(nodeTypeCpuUsage);
-            // Per ClusterNodeType CPU Capacity
-            int nodeTypeCpuCapacity = nodeTypeResourceCapacityMap.get(nodeType).getCpuCapacity();
-            // Per ClusterNodeType CPU Capacity And Usage
-            int nodeTypeCpuAvailable = nodeTypeCpuCapacity - nodeTypeCpuUsage;
-            if (nodeTypeCpuAvailable < 0) {
-                hardScore += nodeTypeCpuAvailable;
+
+            // Per AZ Resource Usage
+            ResourceUsage availabilityZoneResourceUsage = clusterUtilization.getAzResourceUsageMap().get(availabilityZone);
+            availabilityZoneResourceUsage.setCpuUsage(availabilityZoneResourceUsage.getCpuUsage() + clusterNodeResourceCapacity.getCpuUsage());
+            availabilityZoneResourceUsage.setMemoryUsage(availabilityZoneResourceUsage.getMemoryUsage() + clusterNodeResourceCapacity.getMemoryUsage());
+            availabilityZoneResourceUsage.setDiskUsage(availabilityZoneResourceUsage.getDiskUsage() + clusterNodeResourceCapacity.getDiskUsage());
+            // Per AZ Resource Capacity
+            ResourceCapacity availabilityZoneResourceCapacity = clusterUtilization.getAzResourceCapacityMap().get(availabilityZone);
+
+            // Per AZ CPU Capacity And Usage
+            if (availabilityZoneResourceCapacity.getCpuCapacity() - availabilityZoneResourceUsage.getCpuUsage() < 0) {
+                score += availabilityZoneResourceCapacity.getCpuCapacity() - availabilityZoneResourceUsage.getCpuUsage();
             }
+
+            // Per ClusterNodeType Resource Usage
+            ResourceUsage nodeTypeResourceUsage = clusterUtilization.getNodeTypeResourceUsageMap().get(nodeType);
+            nodeTypeResourceUsage.setCpuUsage(nodeTypeResourceUsage.getCpuUsage() + clusterNodeResourceCapacity.getCpuUsage());
+            nodeTypeResourceUsage.setMemoryUsage(nodeTypeResourceUsage.getMemoryUsage() + clusterNodeResourceCapacity.getMemoryUsage());
+            nodeTypeResourceUsage.setDiskUsage(nodeTypeResourceUsage.getDiskUsage() + clusterNodeResourceCapacity.getDiskUsage());
+
+            // Per ClusterNodeType Resource Capacity
+            ResourceCapacity nodeTypeResourceCapacity = clusterUtilization.getNodeTypeResourceCapacityMap().get(nodeType);
+            // Per ClusterNodeType CPU Capacity And Usage
+            if (nodeTypeResourceCapacity.getCpuCapacity() - nodeTypeResourceUsage.getCpuUsage() < 0) {
+                score += nodeTypeResourceCapacity.getCpuCapacity() - nodeTypeResourceUsage.getCpuUsage();
+            }
+
+            //
         }
 
-        return hardScore;
+        return score;
     }
 
     private int cpuUsageClusterNodeScore(Map<ClusterNode, ResourceUsage> nodeResourceUsageMap) {
