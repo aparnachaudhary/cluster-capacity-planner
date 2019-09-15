@@ -1,11 +1,11 @@
 package io.github.aparnachaudhary.capacityplanner;
 
 import io.github.aparnachaudhary.capacityplanner.domain.*;
-import io.github.aparnachaudhary.capacityplanner.listener.CloudBalanceSolverEventListener;
+import io.github.aparnachaudhary.capacityplanner.listener.ClusterBalanceSolverEventListener;
 import io.github.aparnachaudhary.capacityplanner.repository.AvailabilityZoneRepository;
-import io.github.aparnachaudhary.capacityplanner.repository.CloudComputerRepository;
-import io.github.aparnachaudhary.capacityplanner.repository.CloudProcessRepository;
-import io.github.aparnachaudhary.capacityplanner.repository.NodeTypeRepository;
+import io.github.aparnachaudhary.capacityplanner.repository.ClusterNodeRepository;
+import io.github.aparnachaudhary.capacityplanner.repository.ClusterProcessRepository;
+import io.github.aparnachaudhary.capacityplanner.repository.ClusterNodeTypeRepository;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.csv.CSVFormat;
@@ -26,18 +26,18 @@ import java.util.List;
 @Slf4j
 public class SolutionDataImporter implements ApplicationRunner {
 
-    private CloudProcessRepository cloudProcessRepository;
-    private CloudComputerRepository cloudComputerRepository;
-    private NodeTypeRepository nodeTypeRepository;
+    private ClusterProcessRepository clusterProcessRepository;
+    private ClusterNodeRepository clusterNodeRepository;
+    private ClusterNodeTypeRepository clusterNodeTypeRepository;
     private AvailabilityZoneRepository availabilityZoneRepository;
-    private CloudBalanceSolverEventListener solverEventListener;
+    private ClusterBalanceSolverEventListener solverEventListener;
 
-    public SolutionDataImporter(CloudProcessRepository cloudProcessRepository, CloudComputerRepository cloudComputerRepository,
-                                NodeTypeRepository nodeTypeRepository, AvailabilityZoneRepository availabilityZoneRepository,
-                                CloudBalanceSolverEventListener solverEventListener) {
-        this.cloudProcessRepository = cloudProcessRepository;
-        this.cloudComputerRepository = cloudComputerRepository;
-        this.nodeTypeRepository = nodeTypeRepository;
+    public SolutionDataImporter(ClusterProcessRepository clusterProcessRepository, ClusterNodeRepository clusterNodeRepository,
+                                ClusterNodeTypeRepository clusterNodeTypeRepository, AvailabilityZoneRepository availabilityZoneRepository,
+                                ClusterBalanceSolverEventListener solverEventListener) {
+        this.clusterProcessRepository = clusterProcessRepository;
+        this.clusterNodeRepository = clusterNodeRepository;
+        this.clusterNodeTypeRepository = clusterNodeTypeRepository;
         this.availabilityZoneRepository = availabilityZoneRepository;
         this.solverEventListener = solverEventListener;
     }
@@ -46,88 +46,88 @@ public class SolutionDataImporter implements ApplicationRunner {
     public void run(ApplicationArguments applicationArguments) throws Exception {
 
         List<AvailabilityZone> availabilityZones = fetchAndSaveCloudAvailabilityZones();
-        List<NodeType> nodeTypes = fetchAndSaveCloudNodeTypes();
-        List<CloudComputer> computers = fetchAndSaveCloudComputers();
-        List<CloudProcess> processes = fetchAndSaveCloudProcesses();
+        List<ClusterNodeType> nodeTypes = fetchAndSaveCloudNodeTypes();
+        List<ClusterNode> computers = fetchAndSaveClusterNodes();
+        List<ClusterProcess> processes = fetchAndSaveClusterProcesses();
 
-        val initSolution = CloudBalance.builder()
+        val initSolution = ClusterBalance.builder()
                 .id(0L)
-                .cloudComputers(computers)
-                .cloudProcesses(processes)
+                .clusterNodes(computers)
+                .clusterProcesses(processes)
                 .availabilityZones(availabilityZones)
                 .nodeTypes(nodeTypes)
                 .build();
 
         InputStream cloudSolutionStream = this.getClass().getResourceAsStream("/solution/solution.xml");
-        SolverFactory<CloudBalance> solutionFactory = SolverFactory.createFromXmlInputStream(cloudSolutionStream);
-        Solver<CloudBalance> solver = solutionFactory.buildSolver();
+        SolverFactory<ClusterBalance> solutionFactory = SolverFactory.createFromXmlInputStream(cloudSolutionStream);
+        Solver<ClusterBalance> solver = solutionFactory.buildSolver();
         solver.addEventListener(solverEventListener);
 
         log.info("Solving Capacity Planning Problem for initSolution={}", initSolution);
-        CloudBalance solution = solver.solve(initSolution);
+        ClusterBalance solution = solver.solve(initSolution);
 //        log.info("Solver score={}" + solver.explainBestScore());
-        solution.getCloudProcesses().forEach(cloudProcess -> log.info(cloudProcess.toString()));
+        solution.getClusterProcesses().forEach(cloudProcess -> log.info(cloudProcess.toString()));
 
     }
 
 
-    private List<CloudProcess> fetchAndSaveCloudProcesses() throws IOException {
+    private List<ClusterProcess> fetchAndSaveClusterProcesses() throws IOException {
 
         InputStream is = this.getClass().getResourceAsStream("/data/processes/processes-small.csv");
         Iterable<CSVRecord> records = CSVFormat.DEFAULT.withFirstRecordAsHeader().parse(new InputStreamReader(is));
-        List<CloudProcess> processes = new ArrayList<>(6);
+        List<ClusterProcess> processes = new ArrayList<>(6);
         for (CSVRecord record : records) {
-            processes.add(CloudProcess.builder()
+            processes.add(ClusterProcess.builder()
                     .id(Long.parseLong(record.get("id")))
                     .name(record.get("name"))
                     .cpuRequired(Integer.parseInt(record.get("cpu")))
                     .memoryRequired(Integer.parseInt(record.get("memory")))
                     .diskRequired(Integer.parseInt(record.get("disk")))
                     .availabilityZoneRequired(AvailabilityZone.builder().id(Long.parseLong(record.get("availabilityZone"))).build())
-                    .nodeTypeRequired(NodeType.builder().id(Long.parseLong(record.get("nodeType"))).build())
+                    .clusterNodeType(ClusterNodeType.builder().id(Long.parseLong(record.get("clusterNodeType"))).build())
                     .build());
         }
-        cloudProcessRepository.saveAll(processes);
-        List<CloudProcess> resultList = new ArrayList<>();
-        cloudProcessRepository.findAll().iterator().forEachRemaining(resultList::add);
+        clusterProcessRepository.saveAll(processes);
+        List<ClusterProcess> resultList = new ArrayList<>();
+        clusterProcessRepository.findAll().iterator().forEachRemaining(resultList::add);
         return resultList;
     }
 
-    private List<CloudComputer> fetchAndSaveCloudComputers() throws IOException {
+    private List<ClusterNode> fetchAndSaveClusterNodes() throws IOException {
 
-        InputStream is = this.getClass().getResourceAsStream("/data/computers/computers-small.csv");
+        InputStream is = this.getClass().getResourceAsStream("/data/clusterNodes/clusterNodes-small.csv");
         Iterable<CSVRecord> records = CSVFormat.DEFAULT.withFirstRecordAsHeader().parse(new InputStreamReader(is));
-        List<CloudComputer> computers = new ArrayList<>(2);
+        List<ClusterNode> clusterNodes = new ArrayList<>(2);
         for (CSVRecord record : records) {
-            computers.add(CloudComputer.builder()
+            clusterNodes.add(ClusterNode.builder()
                     .id(Long.parseLong(record.get("id")))
                     .name(record.get("name"))
                     .cpuCapacity(Integer.parseInt(record.get("cpu")))
                     .memoryCapacity(Integer.parseInt(record.get("memory")))
                     .diskCapacity(Integer.parseInt(record.get("disk")))
                     .availabilityZone(AvailabilityZone.builder().id(Long.parseLong(record.get("availabilityZone"))).build())
-                    .nodeType(NodeType.builder().id(Long.parseLong(record.get("nodeType"))).build())
+                    .clusterNodeType(ClusterNodeType.builder().id(Long.parseLong(record.get("clusterNodeType"))).build())
                     .cost(Integer.parseInt(record.get("cost")))
                     .build());
         }
-        cloudComputerRepository.saveAll(computers);
+        clusterNodeRepository.saveAll(clusterNodes);
 
-        List<CloudComputer> resultList = new ArrayList<>();
-        cloudComputerRepository.findAll()
+        List<ClusterNode> resultList = new ArrayList<>();
+        clusterNodeRepository.findAll()
                 .iterator()
                 .forEachRemaining(resultList::add);
         return resultList;
     }
 
-    private List<NodeType> fetchAndSaveCloudNodeTypes() {
+    private List<ClusterNodeType> fetchAndSaveCloudNodeTypes() {
 
-        List<NodeType> nodeTypes = new ArrayList<>(2);
-        nodeTypes.add(NodeType.builder().id(0L).name("COMPUTE").build());
-        nodeTypes.add(NodeType.builder().id(1L).name("EDGE").build());
-        nodeTypes.add(NodeType.builder().id(2L).name("STORAGE").build());
-        nodeTypeRepository.saveAll(nodeTypes);
-        List<NodeType> resultList = new ArrayList<>();
-        nodeTypeRepository.findAll().iterator().forEachRemaining(resultList::add);
+        List<ClusterNodeType> nodeTypes = new ArrayList<>(2);
+        nodeTypes.add(ClusterNodeType.builder().id(0L).name("COMPUTE").build());
+        nodeTypes.add(ClusterNodeType.builder().id(1L).name("EDGE").build());
+        nodeTypes.add(ClusterNodeType.builder().id(2L).name("STORAGE").build());
+        clusterNodeTypeRepository.saveAll(nodeTypes);
+        List<ClusterNodeType> resultList = new ArrayList<>();
+        clusterNodeTypeRepository.findAll().iterator().forEachRemaining(resultList::add);
         return resultList;
     }
 

@@ -2,8 +2,8 @@
     <!-- ========================= -->
     <!-- TO DEFINE MODEL -->
     <!-- ========================= -->
-    <solutionClass>io.github.aparnachaudhary.capacityplanner.domain.CloudBalance</solutionClass>
-    <entityClass>io.github.aparnachaudhary.capacityplanner.domain.CloudProcess</entityClass>
+    <solutionClass>io.github.aparnachaudhary.capacityplanner.domain.ClusterBalance</solutionClass>
+    <entityClass>io.github.aparnachaudhary.capacityplanner.domain.ClusterProcess</entityClass>
 
     <!-- Define the score function -->
     <scoreDirectorFactory>

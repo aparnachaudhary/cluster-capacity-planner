@@ -11,7 +11,7 @@ import javax.persistence.*;
 @DeepPlanningClone
 @Data
 @Builder
-public class NodeType {
+public class ClusterNodeType {
 
     @PlanningId
     @Id
@@ -21,7 +21,7 @@ public class NodeType {
 
     @Override
     public String toString() {
-        return "NodeType - " + name;
+        return "ClusterNodeType - " + name;
     }
 
 

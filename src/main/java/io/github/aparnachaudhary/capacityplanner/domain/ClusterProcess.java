@@ -1,6 +1,6 @@
 package io.github.aparnachaudhary.capacityplanner.domain;
 
-import io.github.aparnachaudhary.capacityplanner.extension.ComputerStrengthComparator;
+import io.github.aparnachaudhary.capacityplanner.extension.ClusterNodeStrengthComparator;
 import io.github.aparnachaudhary.capacityplanner.extension.ProcessDifficultyComparator;
 import lombok.Builder;
 import lombok.Data;
@@ -21,7 +21,7 @@ import java.io.Serializable;
 @DeepPlanningClone
 @Data
 @Builder
-public class CloudProcess implements Serializable, Comparable<CloudProcess> {
+public class ClusterProcess implements Serializable, Comparable<ClusterProcess> {
 
     private static final long serialVersionUID = -224283897820531278L;
 
@@ -38,11 +38,11 @@ public class CloudProcess implements Serializable, Comparable<CloudProcess> {
     private AvailabilityZone availabilityZoneRequired;
 
     @OneToOne
-    private NodeType nodeTypeRequired;
+    private ClusterNodeType clusterNodeType;
 
-    @PlanningVariable(valueRangeProviderRefs = "computerProvider", strengthComparatorClass = ComputerStrengthComparator.class, nullable = true)
+    @PlanningVariable(valueRangeProviderRefs = "clusterNodeProvider", strengthComparatorClass = ClusterNodeStrengthComparator.class, nullable = true)
     @ManyToOne
-    private CloudComputer cloudComputer;
+    private ClusterNode clusterNode;
 
     public int getDifficultyIndex() {
         return cpuRequired * memoryRequired * diskRequired;
@@ -51,18 +51,18 @@ public class CloudProcess implements Serializable, Comparable<CloudProcess> {
     @Override
     public String toString() {
 
-        return "CloudProcess - " + id +
+        return "ClusterProcess - " + id +
                 " with name:" + name +
                 ", cpuRequired:" + cpuRequired +
                 ", memoryRequired:" + memoryRequired +
                 ", diskRequired:" + diskRequired +
                 ", AZ:" + availabilityZoneRequired +
-                ", nodeType:" + nodeTypeRequired +
-                "; Assigned to CloudComputer: " + cloudComputer;
+                ", clusterNodeType:" + clusterNodeType +
+                "; Assigned to ClusterNode: " + clusterNode;
     }
 
     @Override
-    public int compareTo(CloudProcess o) {
+    public int compareTo(ClusterProcess o) {
         return new CompareToBuilder()
                 .append(getClass().getName(), o.getClass().getName())
                 .append(id, o.id)

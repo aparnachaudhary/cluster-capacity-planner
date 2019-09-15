@@ -23,7 +23,7 @@ public class AvailabilityZone {
     private String name;
 
     @Transient
-    private List<CloudComputer> cloudComputers;
+    private List<ClusterNode> clusterNodes;
 
     @Override
     public String toString() {

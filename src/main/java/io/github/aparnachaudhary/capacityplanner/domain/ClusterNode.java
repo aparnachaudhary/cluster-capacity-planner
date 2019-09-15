@@ -13,7 +13,7 @@ import java.io.Serializable;
 @DeepPlanningClone
 @Data
 @Builder
-public class CloudComputer implements Serializable, Comparable<CloudComputer> {
+public class ClusterNode implements Serializable, Comparable<ClusterNode> {
 
     private static final long serialVersionUID = 2330429295141905631L;
 
@@ -29,14 +29,14 @@ public class CloudComputer implements Serializable, Comparable<CloudComputer> {
     @ManyToOne
     private AvailabilityZone availabilityZone;
     @ManyToOne
-    private NodeType nodeType;
+    private ClusterNodeType clusterNodeType;
 
     public int getDifficultyIndex() {
         return cpuCapacity * memoryCapacity * diskCapacity;
     }
 
     @Override
-    public int compareTo(CloudComputer o) {
+    public int compareTo(ClusterNode o) {
         return new CompareToBuilder()
                 .append(getClass().getName(), o.getClass().getName())
                 .append(id, o.id)
@@ -46,13 +46,13 @@ public class CloudComputer implements Serializable, Comparable<CloudComputer> {
     @Override
     public String toString() {
 
-        return "[CloudComputer - " + id +
+        return "[ClusterNode - " + id +
                 " with name:" + name +
                 ", CPU:" + cpuCapacity +
                 ", MEM:" + memoryCapacity +
                 ", DISK:" + diskCapacity +
                 ", AZ:" + availabilityZone +
-                ", nodeType:" + nodeType +
+                ", clusterNodeType:" + clusterNodeType +
                 ", cost:" + cost + "]";
     }
 

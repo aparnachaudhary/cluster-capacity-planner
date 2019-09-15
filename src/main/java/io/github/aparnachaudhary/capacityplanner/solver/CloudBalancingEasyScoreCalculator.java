@@ -1,32 +1,32 @@
 package io.github.aparnachaudhary.capacityplanner.solver;
 
-import io.github.aparnachaudhary.capacityplanner.domain.CloudBalance;
-import io.github.aparnachaudhary.capacityplanner.domain.CloudComputer;
-import io.github.aparnachaudhary.capacityplanner.domain.CloudProcess;
+import io.github.aparnachaudhary.capacityplanner.domain.ClusterBalance;
+import io.github.aparnachaudhary.capacityplanner.domain.ClusterNode;
+import io.github.aparnachaudhary.capacityplanner.domain.ClusterProcess;
 import org.optaplanner.core.api.score.buildin.hardsoft.HardSoftScore;
 import org.optaplanner.core.impl.score.director.easy.EasyScoreCalculator;
 
-public class CloudBalancingEasyScoreCalculator implements EasyScoreCalculator<CloudBalance> {
+public class CloudBalancingEasyScoreCalculator implements EasyScoreCalculator<ClusterBalance> {
 
     /**
      * A very simple implementation. The double loop can easily be removed by using Maps as shown in
-     * {@link CloudBalancingMapBasedEasyScoreCalculator#calculateScore(CloudBalance)}.
+     * {@link CloudBalancingMapBasedEasyScoreCalculator#calculateScore(ClusterBalance)}.
      */
     @Override
-    public HardSoftScore calculateScore(CloudBalance cloudBalance) {
+    public HardSoftScore calculateScore(ClusterBalance clusterBalance) {
 
         int hardScore = 0;
         int softScore = 0;
 
-        for (CloudComputer computer : cloudBalance.getCloudComputers()) {
+        for (ClusterNode computer : clusterBalance.getClusterNodes()) {
             int cpuCapacityUsage = 0;
             int memoryUsage = 0;
             int diskUsage = 0;
             boolean used = false;
 
             // Calculate usage
-            for (CloudProcess process : cloudBalance.getCloudProcesses()) {
-                if (computer.equals(process.getCloudComputer())) {
+            for (ClusterProcess process : clusterBalance.getClusterProcesses()) {
+                if (computer.equals(process.getClusterNode())) {
                     cpuCapacityUsage += process.getCpuRequired();
                     memoryUsage += process.getMemoryRequired();
                     diskUsage += process.getDiskRequired();

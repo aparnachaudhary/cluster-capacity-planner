@@ -1,6 +1,6 @@
 package io.github.aparnachaudhary.capacityplanner.solver;
 
-import io.github.aparnachaudhary.capacityplanner.domain.CloudProcess;
+import io.github.aparnachaudhary.capacityplanner.domain.ClusterProcess;
 import org.optaplanner.core.api.score.buildin.hardmediumsoft.HardMediumSoftScore;
 import org.optaplanner.core.api.score.stream.Constraint;
 import org.optaplanner.core.api.score.stream.ConstraintFactory;
@@ -30,8 +30,8 @@ public class CloudBalancingConstraintProvider implements ConstraintProvider {
     // ************************************************************************
 
     private Constraint requiredCpuPowerTotal(ConstraintFactory constraintFactory) {
-        return constraintFactory.from(CloudProcess.class)
-                .groupBy(CloudProcess::getCloudComputer, sum(CloudProcess::getCpuRequired))
+        return constraintFactory.from(ClusterProcess.class)
+                .groupBy(ClusterProcess::getClusterNode, sum(ClusterProcess::getCpuRequired))
                 .filter((cloudComputer, cpuRequired) -> cpuRequired > cloudComputer.getCpuCapacity())
                 .penalize("requiredCpuPowerTotal",
                         HardMediumSoftScore.ONE_HARD,
@@ -39,8 +39,8 @@ public class CloudBalancingConstraintProvider implements ConstraintProvider {
     }
 
     private Constraint requiredMemoryTotal(ConstraintFactory constraintFactory) {
-        return constraintFactory.from(CloudProcess.class)
-                .groupBy(CloudProcess::getCloudComputer, sum(CloudProcess::getMemoryRequired))
+        return constraintFactory.from(ClusterProcess.class)
+                .groupBy(ClusterProcess::getClusterNode, sum(ClusterProcess::getMemoryRequired))
                 .filter((cloudComputer, memoryRequired) -> memoryRequired > cloudComputer.getMemoryCapacity())
                 .penalize("requiredMemoryTotal",
                         HardMediumSoftScore.ONE_HARD,
@@ -48,8 +48,8 @@ public class CloudBalancingConstraintProvider implements ConstraintProvider {
     }
 
     private Constraint requiredDiskUsageTotal(ConstraintFactory constraintFactory) {
-        return constraintFactory.from(CloudProcess.class)
-                .groupBy(CloudProcess::getCloudComputer, sum(CloudProcess::getDiskRequired))
+        return constraintFactory.from(ClusterProcess.class)
+                .groupBy(ClusterProcess::getClusterNode, sum(ClusterProcess::getDiskRequired))
                 .filter((cloudComputer, diskRequired) -> diskRequired > cloudComputer.getDiskCapacity())
                 .penalize("requiredDiskUsageTotal",
                         HardMediumSoftScore.ONE_MEDIUM,
@@ -61,8 +61,8 @@ public class CloudBalancingConstraintProvider implements ConstraintProvider {
     // ************************************************************************
 
     private Constraint notAssigned(ConstraintFactory constraintFactory) {
-        return constraintFactory.from(CloudProcess.class)
-                .groupBy(CloudProcess::getCloudComputer, sum(CloudProcess::getDiskRequired))
+        return constraintFactory.from(ClusterProcess.class)
+                .groupBy(ClusterProcess::getClusterNode, sum(ClusterProcess::getDiskRequired))
                 .filter((cloudComputer, diskRequired) -> diskRequired > cloudComputer.getDiskCapacity())
                 .penalize("notAssigned",
                         HardMediumSoftScore.ONE_MEDIUM,
@@ -74,11 +74,11 @@ public class CloudBalancingConstraintProvider implements ConstraintProvider {
     // ************************************************************************
 
     private Constraint computerCost(ConstraintFactory constraintFactory) {
-        return constraintFactory.from(CloudProcess.class)
+        return constraintFactory.from(ClusterProcess.class)
                 // TODO Simplify by using:
-                // .groupBy(CloudProcess::getComputer)
-                // .penalize(CloudComputer::getCost);
-                .groupBy(CloudProcess::getCloudComputer, count())
+                // .groupBy(ClusterProcess::getComputer)
+                // .penalize(ClusterNode::getCost);
+                .groupBy(ClusterProcess::getClusterNode, count())
                 .penalize("computerCost",
                         HardMediumSoftScore.ONE_SOFT,
                         (cloudComputer, count) -> cloudComputer.getCost());

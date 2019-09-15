@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 @PlanningSolution
 @Data
 @Builder
-public class CloudBalance implements Serializable, Comparable<CloudBalance> {
+public class ClusterBalance implements Serializable, Comparable<ClusterBalance> {
 
     @PlanningId
     @Id
@@ -31,17 +31,17 @@ public class CloudBalance implements Serializable, Comparable<CloudBalance> {
     protected HardMediumSoftScore score;
 
     @ProblemFactCollectionProperty
-    @ValueRangeProvider(id = "computerProvider")
-    private List<CloudComputer> cloudComputers;
+    @ValueRangeProvider(id = "clusterNodeProvider")
+    private List<ClusterNode> clusterNodes;
 
     @PlanningEntityCollectionProperty
-    private List<CloudProcess> cloudProcesses;
+    private List<ClusterProcess> clusterProcesses;
     private List<AvailabilityZone> availabilityZones;
-    private List<NodeType> nodeTypes;
+    private List<ClusterNodeType> nodeTypes;
 
 
     @Override
-    public int compareTo(CloudBalance o) {
+    public int compareTo(ClusterBalance o) {
         return new CompareToBuilder().append(getClass().getName(), o.getClass().getName())
                 .append(id, o.id).toComparison();
     }
@@ -58,14 +58,14 @@ public class CloudBalance implements Serializable, Comparable<CloudBalance> {
         Map<AvailabilityZone, ResourceUsage> azCpuUsageMap = availabilityZones.stream()
                 .collect(Collectors.toMap(availabilityZone -> availabilityZone, availabilityZone -> ResourceUsage.builder().build(), (a, b) -> a));
 
-        Map<NodeType, ResourceCapacity> nodeTypeResourceCapacityMap = nodeTypes.stream()
+        Map<ClusterNodeType, ResourceCapacity> nodeTypeResourceCapacityMap = nodeTypes.stream()
                 .collect(Collectors.toMap(nodeType -> nodeType, nodeType -> ResourceCapacity.builder().build(), (a, b) -> a));
-        Map<NodeType, ResourceUsage> nodeTypeResourceUsageMap = nodeTypes.stream()
+        Map<ClusterNodeType, ResourceUsage> nodeTypeResourceUsageMap = nodeTypes.stream()
                 .collect(Collectors.toMap(nodeType -> nodeType, nodeType -> ResourceUsage.builder().build(), (a, b) -> a));
 
-        Map<CloudComputer, ResourceUsage> nodeResourceUsageMap = new HashMap<>(cloudComputers.size());
+        Map<ClusterNode, ResourceUsage> nodeResourceUsageMap = new HashMap<>(clusterNodes.size());
 
-        cloudComputers.forEach(computer -> {
+        clusterNodes.forEach(computer -> {
 
             ResourceCapacity azResourceCapacity = azResourceCapacityMap.get(computer.getAvailabilityZone());
             azResourceCapacity.setCpuCapacity(azResourceCapacity.getCpuCapacity() + computer.getCpuCapacity());
@@ -73,11 +73,11 @@ public class CloudBalance implements Serializable, Comparable<CloudBalance> {
             azResourceCapacity.setDiskCapacity(azResourceCapacity.getDiskCapacity() + computer.getDiskCapacity());
             azResourceCapacityMap.put(computer.getAvailabilityZone(), azResourceCapacity);
 
-            ResourceCapacity nodeTypeResourceCapacity = nodeTypeResourceCapacityMap.get(computer.getNodeType());
+            ResourceCapacity nodeTypeResourceCapacity = nodeTypeResourceCapacityMap.get(computer.getClusterNodeType());
             nodeTypeResourceCapacity.setCpuCapacity(nodeTypeResourceCapacity.getCpuCapacity() + computer.getCpuCapacity());
             nodeTypeResourceCapacity.setMemoryCapacity(nodeTypeResourceCapacity.getMemoryCapacity() + computer.getMemoryCapacity());
             nodeTypeResourceCapacity.setDiskCapacity(nodeTypeResourceCapacity.getDiskCapacity() + computer.getDiskCapacity());
-            nodeTypeResourceCapacityMap.put(computer.getNodeType(), nodeTypeResourceCapacity);
+            nodeTypeResourceCapacityMap.put(computer.getClusterNodeType(), nodeTypeResourceCapacity);
 
             nodeResourceUsageMap.put(computer, ResourceUsage.builder().build());
 

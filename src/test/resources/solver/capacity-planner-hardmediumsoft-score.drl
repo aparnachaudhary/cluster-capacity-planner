@@ -3,8 +3,8 @@ dialect  "java"
 
 import org.optaplanner.core.api.score.buildin.hardmediumsoft.HardMediumSoftScoreHolder;
 
-import io.github.aparnachaudhary.capacityplanner.domain.CloudComputer;
-import io.github.aparnachaudhary.capacityplanner.domain.CloudProcess;
+import io.github.aparnachaudhary.capacityplanner.domain.ClusterNode;
+import io.github.aparnachaudhary.capacityplanner.domain.ClusterProcess;
 
 global HardMediumSoftScoreHolder scoreHolder;
 
@@ -15,9 +15,9 @@ global HardMediumSoftScoreHolder scoreHolder;
 
 rule "CPU capacity"
     when
-        $computer : CloudComputer($cpuCapacity : cpuCapacity)
+        $clusterNode : ClusterNode($cpuCapacity : cpuCapacity)
         $totalUsed : Integer($totalUsed > $cpuCapacity) from accumulate(
-            CloudProcess(cloudComputer == $computer, $cpuRequired : cpuRequired),
+            ClusterProcess(clusterNode == $clusterNode, $cpuRequired : cpuRequired),
             sum($cpuRequired)
         )
     then
@@ -26,9 +26,9 @@ end
 
 rule "Memory capacity"
     when
-        $computer : CloudComputer($memoryCapacity : memoryCapacity)
+        $clusterNode : ClusterNode($memoryCapacity : memoryCapacity)
         $totalUsed : Integer($totalUsed > $memoryCapacity) from accumulate(
-            CloudProcess(cloudComputer == $computer, $memoryRequired : memoryRequired),
+            ClusterProcess(clusterNode == $clusterNode, $memoryRequired : memoryRequired),
             sum($memoryRequired)
         )
     then
@@ -37,9 +37,9 @@ end
 
 rule "Network capacity"
     when
-        $computer : CloudComputer($networkCapacity : networkCapacity)
+        $clusterNode : ClusterNode($networkCapacity : networkCapacity)
         $totalUsed : Integer($totalUsed > $networkCapacity) from accumulate(
-            CloudProcess(cloudComputer == $computer, $networkRequired : networkRequired),
+            ClusterProcess(clusterNode == $clusterNode, $networkRequired : networkRequired),
             sum($networkRequired)
         )
     then
@@ -52,7 +52,7 @@ end
 
 rule "Not Assigned"
     when
-        CloudProcess($weightIndex : getDifficultyIndex(), cloudComputer == null)
+        ClusterProcess($weightIndex : getDifficultyIndex(), clusterNode == null)
     then
         scoreHolder.addMediumConstraintMatch(kcontext, -$weightIndex);
 end
@@ -64,8 +64,8 @@ end
 
 rule "Computer Cost"
     when
-        $computer : CloudComputer($cost : cost)
-        exists CloudProcess(cloudComputer == $computer)
+        $clusterNode : ClusterNode($cost : cost)
+        exists ClusterProcess(clusterNode == $clusterNode)
     then
         scoreHolder.addSoftConstraintMatch(kcontext, - $cost);
 end
