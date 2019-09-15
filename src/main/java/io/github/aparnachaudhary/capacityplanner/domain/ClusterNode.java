@@ -22,9 +22,9 @@ public class ClusterNode implements Serializable, Comparable<ClusterNode> {
     protected Long id;
     private String name;
 
-    private int cpuCapacity;
-    private int memoryCapacity;
-    private int diskCapacity;
+    private int cpu;
+    private int memory;
+    private int disk;
     private int cost;
     @ManyToOne
     private AvailabilityZone availabilityZone;
@@ -32,7 +32,7 @@ public class ClusterNode implements Serializable, Comparable<ClusterNode> {
     private ClusterNodeType clusterNodeType;
 
     public int getDifficultyIndex() {
-        return cpuCapacity * memoryCapacity * diskCapacity;
+        return cpu * memory * disk;
     }
 
     @Override
@@ -48,9 +48,9 @@ public class ClusterNode implements Serializable, Comparable<ClusterNode> {
 
         return "[ClusterNode - " + id +
                 " with name:" + name +
-                ", CPU:" + cpuCapacity +
-                ", MEM:" + memoryCapacity +
-                ", DISK:" + diskCapacity +
+                ", CPU:" + cpu +
+                ", MEM:" + memory +
+                ", DISK:" + disk +
                 ", AZ:" + availabilityZone.getName() +
                 ", clusterNodeType:" + clusterNodeType.getName() +
                 ", cost:" + cost + "]";

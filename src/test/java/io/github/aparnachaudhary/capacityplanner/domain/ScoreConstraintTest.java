@@ -17,21 +17,21 @@ public class ScoreConstraintTest {
 
         val c1 = ClusterNode.builder()
                 .id(1L)
-                .cpuCapacity(10)
-                .memoryCapacity(100)
-                .diskCapacity(1000)
+                .cpu(10)
+                .memory(100)
+                .disk(1000)
                 .cost(50)
                 .build();
 
         val p1 = ClusterProcess.builder()
                 .id(1L)
-                .cpuRequired(1)
+                .cpu(1)
                 .clusterNode(c1)
                 .build();
 
         val p2 = ClusterProcess.builder()
                 .id(2L)
-                .cpuRequired(10)
+                .cpu(10)
                 .clusterNode(c1)
                 .build();
 
@@ -52,21 +52,21 @@ public class ScoreConstraintTest {
 
         val c1 = ClusterNode.builder()
                 .id(1L)
-                .cpuCapacity(10)
-                .memoryCapacity(100)
-                .diskCapacity(1000)
+                .cpu(10)
+                .memory(100)
+                .disk(1000)
                 .cost(50)
                 .build();
 
         val p1 = ClusterProcess.builder()
                 .id(1L)
-                .memoryRequired(100)
+                .memory(100)
                 .clusterNode(c1)
                 .build();
 
         val p2 = ClusterProcess.builder()
                 .id(2L)
-                .memoryRequired(10)
+                .memory(10)
                 .clusterNode(c1)
                 .build();
 
@@ -89,21 +89,21 @@ public class ScoreConstraintTest {
 
         val c1 = ClusterNode.builder()
                 .id(1L)
-                .cpuCapacity(10)
-                .memoryCapacity(100)
-                .diskCapacity(1000)
+                .cpu(10)
+                .memory(100)
+                .disk(1000)
                 .cost(50)
                 .build();
 
         val p1 = ClusterProcess.builder()
                 .id(1L)
-                .diskRequired(500)
+                .disk(500)
                 .clusterNode(c1)
                 .build();
 
         val p2 = ClusterProcess.builder()
                 .id(2L)
-                .diskRequired(1000)
+                .disk(1000)
                 .clusterNode(c1)
                 .build();
 
@@ -124,33 +124,33 @@ public class ScoreConstraintTest {
 
         val c1 = ClusterNode.builder()
                 .id(1L)
-                .cpuCapacity(10)
-                .memoryCapacity(100)
-                .diskCapacity(1000)
+                .cpu(10)
+                .memory(100)
+                .disk(1000)
                 .cost(50)
                 .build();
 
         val c2 = ClusterNode.builder()
                 .id(2L)
-                .cpuCapacity(10)
-                .memoryCapacity(100)
-                .diskCapacity(1000)
+                .cpu(10)
+                .memory(100)
+                .disk(1000)
                 .cost(500)
                 .build();
 
         val p1 = ClusterProcess.builder()
                 .id(1L)
-                .cpuRequired(1)
-                .memoryRequired(100)
-                .diskRequired(500)
+                .cpu(1)
+                .memory(100)
+                .disk(500)
                 .clusterNode(c1)
                 .build();
 
         val p2 = ClusterProcess.builder()
                 .id(2L)
-                .cpuRequired(10)
-                .memoryRequired(10)
-                .diskRequired(1000)
+                .cpu(10)
+                .memory(10)
+                .disk(1000)
                 .clusterNode(c2)
                 .build();
 
@@ -171,17 +171,17 @@ public class ScoreConstraintTest {
 
         val c1 = ClusterNode.builder()
                 .id(1L)
-                .cpuCapacity(10)
-                .memoryCapacity(100)
-                .diskCapacity(1000)
+                .cpu(10)
+                .memory(100)
+                .disk(1000)
                 .cost(50)
                 .build();
 
         val p1 = ClusterProcess.builder()
                 .id(1L)
-                .cpuRequired(1)
-                .memoryRequired(100)
-                .diskRequired(500)
+                .cpu(1)
+                .memory(100)
+                .disk(500)
                 .build();
 
         val s1 = ClusterBalance.builder()

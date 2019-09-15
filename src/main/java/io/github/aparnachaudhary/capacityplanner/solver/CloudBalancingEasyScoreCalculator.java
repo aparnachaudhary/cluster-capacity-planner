@@ -27,23 +27,23 @@ public class CloudBalancingEasyScoreCalculator implements EasyScoreCalculator<Cl
             // Calculate usage
             for (ClusterProcess process : clusterBalance.getClusterProcesses()) {
                 if (clusterNode.equals(process.getClusterNode())) {
-                    cpuCapacityUsage += process.getCpuRequired();
-                    memoryUsage += process.getMemoryRequired();
-                    diskUsage += process.getDiskRequired();
+                    cpuCapacityUsage += process.getCpu();
+                    memoryUsage += process.getMemory();
+                    diskUsage += process.getDisk();
                     used = true;
                 }
             }
 
             // Hard constraints
-            int cpuPowerAvailable = clusterNode.getCpuCapacity() - cpuCapacityUsage;
+            int cpuPowerAvailable = clusterNode.getCpu() - cpuCapacityUsage;
             if (cpuPowerAvailable < 0) {
                 hardScore += cpuPowerAvailable;
             }
-            int memoryAvailable = clusterNode.getMemoryCapacity() - memoryUsage;
+            int memoryAvailable = clusterNode.getMemory() - memoryUsage;
             if (memoryAvailable < 0) {
                 hardScore += memoryAvailable;
             }
-            int diskAvailable = clusterNode.getDiskCapacity() - diskUsage;
+            int diskAvailable = clusterNode.getDisk() - diskUsage;
             if (diskAvailable < 0) {
                 hardScore += diskAvailable;
             }

@@ -31,29 +31,29 @@ public class CloudBalancingConstraintProvider implements ConstraintProvider {
 
     private Constraint requiredCpuPowerTotal(ConstraintFactory constraintFactory) {
         return constraintFactory.from(ClusterProcess.class)
-                .groupBy(ClusterProcess::getClusterNode, sum(ClusterProcess::getCpuRequired))
-                .filter((cloudComputer, cpuRequired) -> cpuRequired > cloudComputer.getCpuCapacity())
+                .groupBy(ClusterProcess::getClusterNode, sum(ClusterProcess::getCpu))
+                .filter((cloudComputer, cpuRequired) -> cpuRequired > cloudComputer.getCpu())
                 .penalize("requiredCpuPowerTotal",
                         HardMediumSoftScore.ONE_HARD,
-                        (cloudComputer, cpuRequired) -> cpuRequired - cloudComputer.getCpuCapacity());
+                        (cloudComputer, cpuRequired) -> cpuRequired - cloudComputer.getCpu());
     }
 
     private Constraint requiredMemoryTotal(ConstraintFactory constraintFactory) {
         return constraintFactory.from(ClusterProcess.class)
-                .groupBy(ClusterProcess::getClusterNode, sum(ClusterProcess::getMemoryRequired))
-                .filter((cloudComputer, memoryRequired) -> memoryRequired > cloudComputer.getMemoryCapacity())
+                .groupBy(ClusterProcess::getClusterNode, sum(ClusterProcess::getMemory))
+                .filter((cloudComputer, memoryRequired) -> memoryRequired > cloudComputer.getMemory())
                 .penalize("requiredMemoryTotal",
                         HardMediumSoftScore.ONE_HARD,
-                        (cloudComputer, memoryRequired) -> memoryRequired - cloudComputer.getMemoryCapacity());
+                        (cloudComputer, memoryRequired) -> memoryRequired - cloudComputer.getMemory());
     }
 
     private Constraint requiredDiskUsageTotal(ConstraintFactory constraintFactory) {
         return constraintFactory.from(ClusterProcess.class)
-                .groupBy(ClusterProcess::getClusterNode, sum(ClusterProcess::getDiskRequired))
-                .filter((cloudComputer, diskRequired) -> diskRequired > cloudComputer.getDiskCapacity())
+                .groupBy(ClusterProcess::getClusterNode, sum(ClusterProcess::getDisk))
+                .filter((cloudComputer, diskRequired) -> diskRequired > cloudComputer.getDisk())
                 .penalize("requiredDiskUsageTotal",
                         HardMediumSoftScore.ONE_MEDIUM,
-                        (cloudComputer, diskRequired) -> diskRequired - cloudComputer.getDiskCapacity());
+                        (cloudComputer, diskRequired) -> diskRequired - cloudComputer.getDisk());
     }
 
     // ************************************************************************
@@ -62,11 +62,11 @@ public class CloudBalancingConstraintProvider implements ConstraintProvider {
 
     private Constraint notAssigned(ConstraintFactory constraintFactory) {
         return constraintFactory.from(ClusterProcess.class)
-                .groupBy(ClusterProcess::getClusterNode, sum(ClusterProcess::getDiskRequired))
-                .filter((cloudComputer, diskRequired) -> diskRequired > cloudComputer.getDiskCapacity())
+                .groupBy(ClusterProcess::getClusterNode, sum(ClusterProcess::getDisk))
+                .filter((cloudComputer, diskRequired) -> diskRequired > cloudComputer.getDisk())
                 .penalize("notAssigned",
                         HardMediumSoftScore.ONE_MEDIUM,
-                        (cloudComputer, diskRequired) -> diskRequired - cloudComputer.getDiskCapacity());
+                        (cloudComputer, diskRequired) -> diskRequired - cloudComputer.getDisk());
     }
 
     // ************************************************************************

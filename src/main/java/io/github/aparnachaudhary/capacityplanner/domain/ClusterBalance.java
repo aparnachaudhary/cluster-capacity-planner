@@ -68,15 +68,15 @@ public class ClusterBalance implements Serializable, Comparable<ClusterBalance> 
         clusterNodes.forEach(clusterNode -> {
 
             ResourceCapacity azResourceCapacity = azResourceCapacityMap.get(clusterNode.getAvailabilityZone());
-            azResourceCapacity.setCpuCapacity(azResourceCapacity.getCpuCapacity() + clusterNode.getCpuCapacity());
-            azResourceCapacity.setMemoryCapacity(azResourceCapacity.getMemoryCapacity() + clusterNode.getMemoryCapacity());
-            azResourceCapacity.setDiskCapacity(azResourceCapacity.getDiskCapacity() + clusterNode.getDiskCapacity());
+            azResourceCapacity.setCpuCapacity(azResourceCapacity.getCpuCapacity() + clusterNode.getCpu());
+            azResourceCapacity.setMemoryCapacity(azResourceCapacity.getMemoryCapacity() + clusterNode.getMemory());
+            azResourceCapacity.setDiskCapacity(azResourceCapacity.getDiskCapacity() + clusterNode.getDisk());
             azResourceCapacityMap.put(clusterNode.getAvailabilityZone(), azResourceCapacity);
 
             ResourceCapacity nodeTypeResourceCapacity = nodeTypeResourceCapacityMap.get(clusterNode.getClusterNodeType());
-            nodeTypeResourceCapacity.setCpuCapacity(nodeTypeResourceCapacity.getCpuCapacity() + clusterNode.getCpuCapacity());
-            nodeTypeResourceCapacity.setMemoryCapacity(nodeTypeResourceCapacity.getMemoryCapacity() + clusterNode.getMemoryCapacity());
-            nodeTypeResourceCapacity.setDiskCapacity(nodeTypeResourceCapacity.getDiskCapacity() + clusterNode.getDiskCapacity());
+            nodeTypeResourceCapacity.setCpuCapacity(nodeTypeResourceCapacity.getCpuCapacity() + clusterNode.getCpu());
+            nodeTypeResourceCapacity.setMemoryCapacity(nodeTypeResourceCapacity.getMemoryCapacity() + clusterNode.getMemory());
+            nodeTypeResourceCapacity.setDiskCapacity(nodeTypeResourceCapacity.getDiskCapacity() + clusterNode.getDisk());
             nodeTypeResourceCapacityMap.put(clusterNode.getClusterNodeType(), nodeTypeResourceCapacity);
 
             nodeResourceUsageMap.put(clusterNode, ResourceUsage.builder().build());

@@ -43,11 +43,11 @@ public class CloudBalancingMapBasedEasyScoreCalculator implements EasyScoreCalcu
         for (ClusterProcess process : processList) {
             ClusterNode clusterNode = process.getClusterNode();
             if (clusterNode != null) {
-                int cpuPowerUsage = cpuPowerUsageMap.get(clusterNode) + process.getCpuRequired();
+                int cpuPowerUsage = cpuPowerUsageMap.get(clusterNode) + process.getCpu();
                 cpuPowerUsageMap.put(clusterNode, cpuPowerUsage);
-                int memoryUsage = memoryUsageMap.get(clusterNode) + process.getMemoryRequired();
+                int memoryUsage = memoryUsageMap.get(clusterNode) + process.getMemory();
                 memoryUsageMap.put(clusterNode, memoryUsage);
-                int diskUsage = diskUsageMap.get(clusterNode) + process.getDiskRequired();
+                int diskUsage = diskUsageMap.get(clusterNode) + process.getDisk();
                 diskUsageMap.put(clusterNode, diskUsage);
                 usedClusterNodes.add(clusterNode);
             }
@@ -59,21 +59,21 @@ public class CloudBalancingMapBasedEasyScoreCalculator implements EasyScoreCalcu
         int hardScore = 0;
         for (Map.Entry<ClusterNode, Integer> usageEntry : cpuPowerUsageMap.entrySet()) {
             ClusterNode clusterNode = usageEntry.getKey();
-            int cpuPowerAvailable = clusterNode.getCpuCapacity() - usageEntry.getValue();
+            int cpuPowerAvailable = clusterNode.getCpu() - usageEntry.getValue();
             if (cpuPowerAvailable < 0) {
                 hardScore += cpuPowerAvailable;
             }
         }
         for (Map.Entry<ClusterNode, Integer> usageEntry : memoryUsageMap.entrySet()) {
             ClusterNode clusterNode = usageEntry.getKey();
-            int memoryAvailable = clusterNode.getMemoryCapacity() - usageEntry.getValue();
+            int memoryAvailable = clusterNode.getMemory() - usageEntry.getValue();
             if (memoryAvailable < 0) {
                 hardScore += memoryAvailable;
             }
         }
         for (Map.Entry<ClusterNode, Integer> usageEntry : diskUsageMap.entrySet()) {
             ClusterNode clusterNode = usageEntry.getKey();
-            int diskAvailable = clusterNode.getDiskCapacity() - usageEntry.getValue();
+            int diskAvailable = clusterNode.getDisk() - usageEntry.getValue();
             if (diskAvailable < 0) {
                 hardScore += diskAvailable;
             }

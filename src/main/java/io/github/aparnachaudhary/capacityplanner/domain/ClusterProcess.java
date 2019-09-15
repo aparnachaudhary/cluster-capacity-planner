@@ -30,12 +30,12 @@ public class ClusterProcess implements Serializable, Comparable<ClusterProcess> 
     protected Long id;
     private String name;
 
-    private int cpuRequired;
-    private int memoryRequired;
-    private int diskRequired;
+    private int cpu;
+    private int memory;
+    private int disk;
 
     @OneToOne
-    private AvailabilityZone availabilityZoneRequired;
+    private AvailabilityZone availabilityZone;
 
     @OneToOne
     private ClusterNodeType clusterNodeType;
@@ -45,30 +45,30 @@ public class ClusterProcess implements Serializable, Comparable<ClusterProcess> 
     private ClusterNode clusterNode;
 
     public int getDifficultyIndex() {
-        return cpuRequired * memoryRequired * diskRequired;
+        return cpu * memory * disk;
     }
 
     @Override
     public String toString() {
 
-        return "ClusterProcess - " + id +
+        return "ClusterProcess-" + id +
                 " with name:" + name +
-                ", cpuRequired:" + cpuRequired +
-                ", memoryRequired:" + memoryRequired +
-                ", diskRequired:" + diskRequired +
-                ", AZ:" + availabilityZoneRequired.getName() +
+                ", cpu:" + cpu +
+                ", memory:" + memory +
+                ", disk:" + disk +
+                ", AZ:" + availabilityZone.getName() +
                 ", clusterNodeType:" + clusterNodeType.getName() +
                 "; assignedToClusterNode=" + clusterNode;
     }
 
     public String displayString() {
 
-        return "[ClusterProcess - " + id +
+        return "[ClusterProcess-" + id +
                 " with name:" + name +
-                ", cpuRequired:" + cpuRequired +
-                ", memoryRequired:" + memoryRequired +
-                ", diskRequired:" + diskRequired +
-                ", AZ:" + availabilityZoneRequired.getName() +
+                ", cpu:" + cpu +
+                ", memory:" + memory +
+                ", disk:" + disk +
+                ", AZ:" + availabilityZone.getName() +
                 ", clusterNodeType:" + clusterNodeType.getName() +
                 "] assignedToClusterNode=[" + clusterNode.getName() + "]";
     }
