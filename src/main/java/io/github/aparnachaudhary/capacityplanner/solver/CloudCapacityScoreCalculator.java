@@ -15,7 +15,7 @@ public class CloudCapacityScoreCalculator implements EasyScoreCalculator<Cluster
         Set<ClusterNode> usedClusterNodes = new HashSet<>(clusterNodeSize);
 
 
-        CloudUtilization resourceCapacity = clusterBalance.getResourceCapacity();
+        ClusterUtilization resourceCapacity = clusterBalance.getResourceCapacity();
 
         visitProcessList(resourceCapacity, usedClusterNodes, clusterBalance.getClusterProcesses());
 
@@ -43,7 +43,7 @@ public class CloudCapacityScoreCalculator implements EasyScoreCalculator<Cluster
     }
 
 
-    private void visitProcessList(CloudUtilization resourceCapacity, Set<ClusterNode> usedClusterNodes,
+    private void visitProcessList(ClusterUtilization resourceCapacity, Set<ClusterNode> usedClusterNodes,
                                   List<ClusterProcess> processList) {
 
         // We loop through the processList only once for performance
@@ -74,7 +74,7 @@ public class CloudCapacityScoreCalculator implements EasyScoreCalculator<Cluster
 
     }
 
-    private int cpuUsageAvailabilityZoneScore(CloudUtilization resourceCapacity) {
+    private int cpuUsageAvailabilityZoneScore(ClusterUtilization resourceCapacity) {
 
         int hardScore = 0;
 
@@ -102,7 +102,7 @@ public class CloudCapacityScoreCalculator implements EasyScoreCalculator<Cluster
         return hardScore;
     }
 
-    private int cpuUsageNodeTypeScore(CloudUtilization resourceCapacity) {
+    private int cpuUsageNodeTypeScore(ClusterUtilization resourceCapacity) {
 
         int hardScore = 0;
 

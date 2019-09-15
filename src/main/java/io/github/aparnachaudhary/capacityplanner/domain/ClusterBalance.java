@@ -51,7 +51,7 @@ public class ClusterBalance implements Serializable, Comparable<ClusterBalance> 
         return getClass().getName().replaceAll(".*\\.", "") + "-" + id;
     }
 
-    public CloudUtilization getResourceCapacity() {
+    public ClusterUtilization getResourceCapacity() {
 
         Map<AvailabilityZone, ResourceCapacity> azResourceCapacityMap = availabilityZones.stream()
                 .collect(Collectors.toMap(availabilityZone -> availabilityZone, availabilityZone -> ResourceCapacity.builder().build(), (a, b) -> a));
@@ -83,7 +83,7 @@ public class ClusterBalance implements Serializable, Comparable<ClusterBalance> 
 
         });
 
-        return CloudUtilization.builder()
+        return ClusterUtilization.builder()
                 .azResourceCapacityMap(azResourceCapacityMap)
                 .azResourceUsageMap(azCpuUsageMap)
                 .nodeTypeResourceCapacityMap(nodeTypeResourceCapacityMap)

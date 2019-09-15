@@ -7,7 +7,7 @@ import java.util.Map;
 
 @Builder
 @Data
-public class CloudUtilization {
+public class ClusterUtilization {
 
     private Map<AvailabilityZone, ResourceCapacity> azResourceCapacityMap;
     private Map<AvailabilityZone, ResourceUsage> azResourceUsageMap;
