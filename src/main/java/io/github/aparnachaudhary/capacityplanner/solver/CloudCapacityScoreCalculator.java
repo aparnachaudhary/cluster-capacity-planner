@@ -92,6 +92,12 @@ public class CloudCapacityScoreCalculator implements EasyScoreCalculator<Cluster
             if (availabilityZoneResourceCapacity.getCpuCapacity() - availabilityZoneResourceUsage.getCpuUsage() < 0) {
                 score += availabilityZoneResourceCapacity.getCpuCapacity() - availabilityZoneResourceUsage.getCpuUsage();
             }
+            if (availabilityZoneResourceCapacity.getMemoryCapacity() - availabilityZoneResourceUsage.getMemoryUsage() < 0) {
+                score += availabilityZoneResourceCapacity.getMemoryCapacity() - availabilityZoneResourceUsage.getMemoryUsage();
+            }
+            if (availabilityZoneResourceCapacity.getDiskCapacity() - availabilityZoneResourceUsage.getDiskUsage() < 0) {
+                score += availabilityZoneResourceCapacity.getDiskCapacity() - availabilityZoneResourceUsage.getDiskUsage();
+            }
 
             // Per ClusterNodeType Resource Usage
             ResourceUsage nodeTypeResourceUsage = clusterUtilization.getNodeTypeResourceUsageMap().get(nodeType);
@@ -105,10 +111,22 @@ public class CloudCapacityScoreCalculator implements EasyScoreCalculator<Cluster
             if (nodeTypeResourceCapacity.getCpuCapacity() - nodeTypeResourceUsage.getCpuUsage() < 0) {
                 score += nodeTypeResourceCapacity.getCpuCapacity() - nodeTypeResourceUsage.getCpuUsage();
             }
+            if (nodeTypeResourceCapacity.getMemoryCapacity() - nodeTypeResourceUsage.getMemoryUsage() < 0) {
+                score += nodeTypeResourceCapacity.getMemoryCapacity() - nodeTypeResourceUsage.getMemoryUsage();
+            }
+            if (nodeTypeResourceCapacity.getDiskCapacity() - nodeTypeResourceUsage.getDiskUsage() < 0) {
+                score += nodeTypeResourceCapacity.getDiskCapacity() - nodeTypeResourceUsage.getDiskUsage();
+            }
 
             // Per ClusterNode Resource Capacity And Usage
             if (clusterNode.getCpuCapacity() - clusterNodeResourceUsage.getCpuUsage() < 0) {
                 score += clusterNode.getCpuCapacity() - clusterNodeResourceUsage.getCpuUsage();
+            }
+            if (clusterNode.getMemoryCapacity() - clusterNodeResourceUsage.getMemoryUsage() < 0) {
+                score += clusterNode.getMemoryCapacity() - clusterNodeResourceUsage.getMemoryUsage();
+            }
+            if (clusterNode.getDiskCapacity() - clusterNodeResourceUsage.getDiskUsage() < 0) {
+                score += clusterNode.getDiskCapacity() - clusterNodeResourceUsage.getDiskUsage();
             }
         }
 
