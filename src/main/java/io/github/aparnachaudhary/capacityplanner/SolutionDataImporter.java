@@ -73,7 +73,7 @@ public class SolutionDataImporter implements ApplicationRunner {
 
     private List<CloudProcess> fetchAndSaveCloudProcesses() throws IOException {
 
-        InputStream is = this.getClass().getResourceAsStream("/data/process-value/processes-6.csv");
+        InputStream is = this.getClass().getResourceAsStream("/data/process-value/processes-small.csv");
         Iterable<CSVRecord> records = CSVFormat.DEFAULT.withFirstRecordAsHeader().parse(new InputStreamReader(is));
         List<CloudProcess> processes = new ArrayList<>(6);
         for (CSVRecord record : records) {
@@ -82,8 +82,8 @@ public class SolutionDataImporter implements ApplicationRunner {
                     .cpuRequired(Integer.parseInt(record.get("cpu")))
                     .memoryRequired(Integer.parseInt(record.get("memory")))
                     .diskRequired(Integer.parseInt(record.get("disk")))
-                    .availabilityZoneRequired(availabilityZoneRepository.findById(Long.parseLong(record.get("availabilityZone"))).get())
-                    .nodeTypeRequired(nodeTypeRepository.findById(Long.parseLong(record.get("nodeType"))).get())
+                    .availabilityZoneRequired(AvailabilityZone.builder().id(Long.parseLong(record.get("availabilityZone"))).build())
+                    .nodeTypeRequired(NodeType.builder().id(Long.parseLong(record.get("nodeType"))).build())
                     .build());
         }
         cloudProcessRepository.saveAll(processes);
@@ -94,7 +94,7 @@ public class SolutionDataImporter implements ApplicationRunner {
 
     private List<CloudComputer> fetchAndSaveCloudComputers() throws IOException {
 
-        InputStream is = this.getClass().getResourceAsStream("/data/computer-value/computers-2.csv");
+        InputStream is = this.getClass().getResourceAsStream("/data/computer-value/computers-small.csv");
         Iterable<CSVRecord> records = CSVFormat.DEFAULT.withFirstRecordAsHeader().parse(new InputStreamReader(is));
         List<CloudComputer> computers = new ArrayList<>(2);
         for (CSVRecord record : records) {
@@ -103,14 +103,17 @@ public class SolutionDataImporter implements ApplicationRunner {
                     .cpuCapacity(Integer.parseInt(record.get("cpu")))
                     .memoryCapacity(Integer.parseInt(record.get("memory")))
                     .diskCapacity(Integer.parseInt(record.get("disk")))
-                    .availabilityZone(availabilityZoneRepository.findById(Long.parseLong(record.get("availabilityZone"))).get())
-                    .nodeType(nodeTypeRepository.findById(Long.parseLong(record.get("nodeType"))).get())
+                    .availabilityZone(AvailabilityZone.builder().id(Long.parseLong(record.get("availabilityZone"))).build())
+                    .nodeType(NodeType.builder().id(Long.parseLong(record.get("nodeType"))).build())
                     .cost(Integer.parseInt(record.get("cost")))
                     .build());
         }
         cloudComputerRepository.saveAll(computers);
+
         List<CloudComputer> resultList = new ArrayList<>();
-        cloudComputerRepository.findAll().iterator().forEachRemaining(resultList::add);
+        cloudComputerRepository.findAll()
+                .iterator()
+                .forEachRemaining(resultList::add);
         return resultList;
     }
 

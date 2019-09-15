@@ -26,7 +26,7 @@
         <!-- ========================= -->
         <!-- TO USE NODE-TYPE SCORE CALCULATION -->
         <!-- ========================= -->
-        <easyScoreCalculatorClass>io.github.aparnachaudhary.capacityplanner.solver.CloudCapacityWithNodeTypeScoreCalculator</easyScoreCalculatorClass>
+        <easyScoreCalculatorClass>io.github.aparnachaudhary.capacityplanner.solver.CloudCapacityScoreCalculator</easyScoreCalculatorClass>
 
         <!-- ========================= -->
         <!-- TO USE SIMPLE SCORE CALCULATION -->

@@ -27,31 +27,7 @@ public class ResourceCapacity {
     private Map<NodeType, Integer> nodeTypeDiskCapacityMap;
     private Map<NodeType, Integer> nodeTypeDiskUsageMap;
 
-//    private Map<CloudComputer, Integer> cpuCapacityMap;
+    private Map<CloudComputer, Integer> cpuCapacityMap;
     private Map<CloudComputer, Integer> cpuUsageMap;
 
-
-    public Integer getCpuCapacityByNodeType(NodeType nodeType) {
-        return nodeTypeCpuCapacityMap.getOrDefault(nodeType, 0);
-    }
-
-    public Integer getMemCapacityByNodeType(NodeType nodeType) {
-        return nodeTypeMemCapacityMap.getOrDefault(nodeType, 0);
-    }
-
-    public Integer getDiskCapacityByNodeType(NodeType nodeType) {
-        return nodeTypeDiskCapacityMap.getOrDefault(nodeType, 0);
-    }
-
-    public Integer getCpuCapacityByAvailabilityZone(AvailabilityZone availabilityZone) {
-        return azCpuCapacityMap.getOrDefault(availabilityZone, 0);
-    }
-
-    public Integer getMemCapacityByAvailabilityZone(AvailabilityZone availabilityZone) {
-        return azMemCapacityMap.getOrDefault(availabilityZone, 0);
-    }
-
-    public Integer getDiskCapacityByAvailabilityZone(AvailabilityZone availabilityZone) {
-        return azDiskCapacityMap.getOrDefault(availabilityZone, 0);
-    }
 }

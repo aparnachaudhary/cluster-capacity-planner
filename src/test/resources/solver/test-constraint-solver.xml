@@ -5,41 +5,8 @@
     <solutionClass>io.github.aparnachaudhary.capacityplanner.domain.CloudBalance</solutionClass>
     <entityClass>io.github.aparnachaudhary.capacityplanner.domain.CloudProcess</entityClass>
 
-    <!-- ========================= -->
-    <!-- TO PERFORM AUTO-SCANNING OF MODEL -->
-    <!-- ========================= -->
-    <!-- <scanAnnotatedClasses/>-->
-
     <!-- Define the score function -->
     <scoreDirectorFactory>
-
-        <!-- ========================= -->
-        <!-- TO USE SIMPLE SCORE CALCULATION -->
-        <!-- ========================= -->
-        <!--<easyScoreCalculatorClass>io.github.aparnachaudhary.capacityplanner.solver.CloudBalancingEasyScoreCalculator</easyScoreCalculatorClass>-->
-
-        <!-- ========================= -->
-        <!-- TO USE SIMPLE SCORE CALCULATION -->
-        <!-- ========================= -->
-        <!--<easyScoreCalculatorClass>io.github.aparnachaudhary.capacityplanner.solver.CloudBalancingMapBasedEasyScoreCalculator</easyScoreCalculatorClass>-->
-
-        <!-- ========================= -->
-        <!-- TO USE SIMPLE SCORE CALCULATION -->
-        <!-- ========================= -->
-        <!--<constraintProviderClass>io.github.aparnachaudhary.capacityplanner.solver.CloudBalancingConstraintProvider</constraintProviderClass>-->
-
-        <!-- ========================= -->
-        <!-- TO USE DYNAMIC DATA FOR CALCULATION -->
-        <!-- ========================= -->
-        <!--<incrementalScoreCalculatorClass>io.github.aparnachaudhary.capacityplanner.solver.CloudBalancingIncrementalScoreCalculator</incrementalScoreCalculatorClass>-->
-
-
-        <!-- ========================= -->
-        <!-- TO PURPOSE? -->
-        <!-- ========================= -->
-        <!--<assertionScoreDirectorFactory>-->
-        <!--<easyScoreCalculatorClass>io.github.aparnachaudhary.capacityplanner.solver.CloudBalancingMapBasedEasyScoreCalculator</easyScoreCalculatorClass>-->
-        <!--</assertionScoreDirectorFactory>-->
 
         <!-- ========================= -->
         <!-- TO USE DROOLS RULES ENGINE -->
@@ -68,17 +35,5 @@
         <changeMoveSelector>
             <selectionOrder>ORIGINAL</selectionOrder>
         </changeMoveSelector>
-        <!-- changeMoveSelector is the generic form of RowChangeMoveFactory: -->
-        <!--<moveListFactory>-->
-        <!--<moveListFactoryClass>org.optaplanner.examples.nqueens.solver.move.factory.RowChangeMoveFactory</moveListFactoryClass>-->
-        <!--</moveListFactory>-->
-        <!--
-        <acceptor>
-            <entityTabuRatio>0.02</entityTabuRatio>
-        </acceptor>
-        -->
-        <forager>
-            <!-- Real world problems require use of <acceptedCountLimit> -->
-        </forager>
     </localSearch>
 </solver>

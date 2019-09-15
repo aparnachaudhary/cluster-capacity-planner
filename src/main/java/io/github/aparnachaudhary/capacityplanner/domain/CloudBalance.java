@@ -51,22 +51,6 @@ public class CloudBalance implements Serializable, Comparable<CloudBalance> {
         return getClass().getName().replaceAll(".*\\.", "") + "-" + id;
     }
 
-    public Map<AvailabilityZone, Map<NodeType, CloudComputer>> getComputersByAZAndNodeType() {
-
-        Map<AvailabilityZone, Map<NodeType, CloudComputer>> computersByAZAndNodeType = new HashMap<>(availabilityZones.size());
-
-        for (AvailabilityZone availabilityZone : availabilityZones) {
-            computersByAZAndNodeType.put(availabilityZone, new HashMap<>(nodeTypes.size()));
-        }
-
-
-        for (CloudComputer computer : cloudComputers) {
-            Map<NodeType, CloudComputer> computersByNodeType = computersByAZAndNodeType.get(computer.getAvailabilityZone());
-            computersByNodeType.put(computer.getNodeType(), computer);
-        }
-        return computersByAZAndNodeType;
-    }
-
     public ResourceCapacity getResourceCapacity() {
 
         Map<AvailabilityZone, Integer> azCpuCapacityMap = availabilityZones.stream()
