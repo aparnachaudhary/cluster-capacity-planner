@@ -5,10 +5,11 @@ import lombok.Data;
 
 @Builder
 @Data
-public class NodeResourceUsage {
+public class ResourceUsage {
 
     private int cpuUsage;
     private int memoryUsage;
     private int diskUsage;
+
 
 }

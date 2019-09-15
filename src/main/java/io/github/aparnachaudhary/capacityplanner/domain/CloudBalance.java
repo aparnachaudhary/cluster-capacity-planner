@@ -51,12 +51,12 @@ public class CloudBalance implements Serializable, Comparable<CloudBalance> {
         return getClass().getName().replaceAll(".*\\.", "") + "-" + id;
     }
 
-    public ResourceCapacity getResourceCapacity() {
+    public CloudUtilization getResourceCapacity() {
 
-        Map<AvailabilityZone, Integer> azCpuCapacityMap = availabilityZones.stream()
-                .collect(Collectors.toMap(availabilityZone -> availabilityZone, availabilityZone -> 0, (a, b) -> a));
-        Map<AvailabilityZone, Integer> azCpuUsageMap = availabilityZones.stream()
-                .collect(Collectors.toMap(availabilityZone -> availabilityZone, availabilityZone -> 0, (a, b) -> a));
+        Map<AvailabilityZone, ResourceCapacity> azResourceCapacityMap = availabilityZones.stream()
+                .collect(Collectors.toMap(availabilityZone -> availabilityZone, availabilityZone -> ResourceCapacity.builder().build(), (a, b) -> a));
+        Map<AvailabilityZone, ResourceUsage> azCpuUsageMap = availabilityZones.stream()
+                .collect(Collectors.toMap(availabilityZone -> availabilityZone, availabilityZone -> ResourceUsage.builder().build(), (a, b) -> a));
 
         Map<NodeType, Integer> nodeTypeCpuCapacityMap = nodeTypes.stream()
                 .collect(Collectors.toMap(nodeType -> nodeType, nodeType -> 0, (a, b) -> a));
@@ -64,20 +64,26 @@ public class CloudBalance implements Serializable, Comparable<CloudBalance> {
         Map<NodeType, Integer> nodeTypeCpuUsageMap = nodeTypes.stream()
                 .collect(Collectors.toMap(nodeType -> nodeType, nodeType -> 0, (a, b) -> a));
 
-        Map<CloudComputer, NodeResourceUsage> nodeUsageMap = new HashMap<>(cloudComputers.size());
+        Map<CloudComputer, ResourceUsage> nodeUsageMap = new HashMap<>(cloudComputers.size());
 
         cloudComputers.forEach(computer -> {
+
             int cpuCapacityNodeType = nodeTypeCpuCapacityMap.get(computer.getNodeType()) + computer.getCpuCapacity();
             nodeTypeCpuCapacityMap.put(computer.getNodeType(), cpuCapacityNodeType);
-            int cpuCapacityAZ = azCpuCapacityMap.get(computer.getAvailabilityZone()) + computer.getCpuCapacity();
-            azCpuCapacityMap.put(computer.getAvailabilityZone(), cpuCapacityAZ);
-            nodeUsageMap.put(computer, NodeResourceUsage.builder().build());
+
+            ResourceCapacity azResourceCapacity = azResourceCapacityMap.get(computer.getAvailabilityZone());
+            azResourceCapacity.setCpuCapacity(azResourceCapacity.getCpuCapacity() + computer.getCpuCapacity());
+            azResourceCapacity.setMemoryCapacity(azResourceCapacity.getMemoryCapacity() + computer.getMemoryCapacity());
+            azResourceCapacity.setDiskCapacity(azResourceCapacity.getDiskCapacity() + computer.getDiskCapacity());
+
+            azResourceCapacityMap.put(computer.getAvailabilityZone(), azResourceCapacity);
+            nodeUsageMap.put(computer, ResourceUsage.builder().build());
 
         });
 
-        return ResourceCapacity.builder()
-                .azCpuCapacityMap(azCpuCapacityMap)
-                .azCpuUsageMap(azCpuUsageMap)
+        return CloudUtilization.builder()
+                .azResourceCapacityMap(azResourceCapacityMap)
+                .azResourceUsageMap(azCpuUsageMap)
                 .nodeTypeCpuCapacityMap(nodeTypeCpuCapacityMap)
                 .nodeTypeCpuUsageMap(nodeTypeCpuUsageMap)
                 .nodeUsageMap(nodeUsageMap)
