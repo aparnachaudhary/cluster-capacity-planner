@@ -16,6 +16,7 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @PlanningSolution
 @Data
@@ -64,5 +65,38 @@ public class CloudBalance implements Serializable, Comparable<CloudBalance> {
             computersByNodeType.put(computer.getNodeType(), computer);
         }
         return computersByAZAndNodeType;
+    }
+
+    public ResourceCapacity getResourceCapacity() {
+
+        Map<AvailabilityZone, Integer> azCpuCapacityMap = availabilityZones.stream()
+                .collect(Collectors.toMap(availabilityZone -> availabilityZone, availabilityZone -> 0, (a, b) -> a));
+        Map<AvailabilityZone, Integer> azCpuUsageMap = availabilityZones.stream()
+                .collect(Collectors.toMap(availabilityZone -> availabilityZone, availabilityZone -> 0, (a, b) -> a));
+
+        Map<NodeType, Integer> nodeTypeCpuCapacityMap = nodeTypes.stream()
+                .collect(Collectors.toMap(nodeType -> nodeType, nodeType -> 0, (a, b) -> a));
+
+        Map<NodeType, Integer> nodeTypeCpuUsageMap = nodeTypes.stream()
+                .collect(Collectors.toMap(nodeType -> nodeType, nodeType -> 0, (a, b) -> a));
+
+        Map<CloudComputer, Integer> cpuUsageMap = new HashMap<>(cloudComputers.size());
+
+        cloudComputers.forEach(computer -> {
+            int cpuCapacityNodeType = nodeTypeCpuCapacityMap.get(computer.getNodeType()) + computer.getCpuCapacity();
+            nodeTypeCpuCapacityMap.put(computer.getNodeType(), cpuCapacityNodeType);
+            int cpuCapacityAZ = azCpuCapacityMap.get(computer.getAvailabilityZone()) + computer.getCpuCapacity();
+            azCpuCapacityMap.put(computer.getAvailabilityZone(), cpuCapacityAZ);
+            cpuUsageMap.put(computer, 0);
+
+        });
+
+        return ResourceCapacity.builder()
+                .azCpuCapacityMap(azCpuCapacityMap)
+                .azCpuUsageMap(azCpuUsageMap)
+                .nodeTypeCpuCapacityMap(nodeTypeCpuCapacityMap)
+                .nodeTypeCpuUsageMap(nodeTypeCpuUsageMap)
+                .cpuUsageMap(cpuUsageMap)
+                .build();
     }
 }
