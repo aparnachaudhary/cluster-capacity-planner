@@ -7,7 +7,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class SpringbootCloudbalanceApplicationTests {
+public class CapacityPlannerApplicationTests {
 
     @Test
     public void contextLoads() {

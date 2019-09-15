@@ -65,21 +65,21 @@ public class ClusterBalance implements Serializable, Comparable<ClusterBalance> 
 
         Map<ClusterNode, ResourceUsage> nodeResourceUsageMap = new HashMap<>(clusterNodes.size());
 
-        clusterNodes.forEach(computer -> {
+        clusterNodes.forEach(clusterNode -> {
 
-            ResourceCapacity azResourceCapacity = azResourceCapacityMap.get(computer.getAvailabilityZone());
-            azResourceCapacity.setCpuCapacity(azResourceCapacity.getCpuCapacity() + computer.getCpuCapacity());
-            azResourceCapacity.setMemoryCapacity(azResourceCapacity.getMemoryCapacity() + computer.getMemoryCapacity());
-            azResourceCapacity.setDiskCapacity(azResourceCapacity.getDiskCapacity() + computer.getDiskCapacity());
-            azResourceCapacityMap.put(computer.getAvailabilityZone(), azResourceCapacity);
+            ResourceCapacity azResourceCapacity = azResourceCapacityMap.get(clusterNode.getAvailabilityZone());
+            azResourceCapacity.setCpuCapacity(azResourceCapacity.getCpuCapacity() + clusterNode.getCpuCapacity());
+            azResourceCapacity.setMemoryCapacity(azResourceCapacity.getMemoryCapacity() + clusterNode.getMemoryCapacity());
+            azResourceCapacity.setDiskCapacity(azResourceCapacity.getDiskCapacity() + clusterNode.getDiskCapacity());
+            azResourceCapacityMap.put(clusterNode.getAvailabilityZone(), azResourceCapacity);
 
-            ResourceCapacity nodeTypeResourceCapacity = nodeTypeResourceCapacityMap.get(computer.getClusterNodeType());
-            nodeTypeResourceCapacity.setCpuCapacity(nodeTypeResourceCapacity.getCpuCapacity() + computer.getCpuCapacity());
-            nodeTypeResourceCapacity.setMemoryCapacity(nodeTypeResourceCapacity.getMemoryCapacity() + computer.getMemoryCapacity());
-            nodeTypeResourceCapacity.setDiskCapacity(nodeTypeResourceCapacity.getDiskCapacity() + computer.getDiskCapacity());
-            nodeTypeResourceCapacityMap.put(computer.getClusterNodeType(), nodeTypeResourceCapacity);
+            ResourceCapacity nodeTypeResourceCapacity = nodeTypeResourceCapacityMap.get(clusterNode.getClusterNodeType());
+            nodeTypeResourceCapacity.setCpuCapacity(nodeTypeResourceCapacity.getCpuCapacity() + clusterNode.getCpuCapacity());
+            nodeTypeResourceCapacity.setMemoryCapacity(nodeTypeResourceCapacity.getMemoryCapacity() + clusterNode.getMemoryCapacity());
+            nodeTypeResourceCapacity.setDiskCapacity(nodeTypeResourceCapacity.getDiskCapacity() + clusterNode.getDiskCapacity());
+            nodeTypeResourceCapacityMap.put(clusterNode.getClusterNodeType(), nodeTypeResourceCapacity);
 
-            nodeResourceUsageMap.put(computer, ResourceUsage.builder().build());
+            nodeResourceUsageMap.put(clusterNode, ResourceUsage.builder().build());
 
         });
 

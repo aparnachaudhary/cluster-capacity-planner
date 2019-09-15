@@ -49,7 +49,7 @@
         <!-- ========================= -->
         <!-- TO USE DROOLS RULES ENGINE -->
         <!-- ========================= -->
-        <!--<scoreDrl>solution/capacity-planner-hardmediumsoft-score.drl</scoreDrl>-->
+        <!--<scoreDrl>solver/capacity-planning-solver-rules.drl</scoreDrl>-->
 
         <!-- ========================= -->
         <!-- TO PURPOSE? -->

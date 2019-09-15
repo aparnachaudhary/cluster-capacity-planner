@@ -56,9 +56,21 @@ public class ClusterProcess implements Serializable, Comparable<ClusterProcess> 
                 ", cpuRequired:" + cpuRequired +
                 ", memoryRequired:" + memoryRequired +
                 ", diskRequired:" + diskRequired +
-                ", AZ:" + availabilityZoneRequired +
-                ", clusterNodeType:" + clusterNodeType +
-                "; Assigned to ClusterNode: " + clusterNode;
+                ", AZ:" + availabilityZoneRequired.getName() +
+                ", clusterNodeType:" + clusterNodeType.getName() +
+                "; assignedToClusterNode=" + clusterNode;
+    }
+
+    public String displayString() {
+
+        return "[ClusterProcess - " + id +
+                " with name:" + name +
+                ", cpuRequired:" + cpuRequired +
+                ", memoryRequired:" + memoryRequired +
+                ", diskRequired:" + diskRequired +
+                ", AZ:" + availabilityZoneRequired.getName() +
+                ", clusterNodeType:" + clusterNodeType.getName() +
+                "] assignedToClusterNode=[" + clusterNode.getName() + "]";
     }
 
     @Override

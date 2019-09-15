@@ -51,8 +51,8 @@ public class ClusterNode implements Serializable, Comparable<ClusterNode> {
                 ", CPU:" + cpuCapacity +
                 ", MEM:" + memoryCapacity +
                 ", DISK:" + diskCapacity +
-                ", AZ:" + availabilityZone +
-                ", clusterNodeType:" + clusterNodeType +
+                ", AZ:" + availabilityZone.getName() +
+                ", clusterNodeType:" + clusterNodeType.getName() +
                 ", cost:" + cost + "]";
     }
 
