@@ -28,6 +28,7 @@ public class ResourceCapacity {
     private Map<NodeType, Integer> nodeTypeDiskUsageMap;
 
     private Map<CloudComputer, Integer> cpuCapacityMap;
-    private Map<CloudComputer, Integer> cpuUsageMap;
+
+    private Map<CloudComputer, NodeResourceUsage> nodeUsageMap;
 
 }

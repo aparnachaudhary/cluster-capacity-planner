@@ -64,14 +64,14 @@ public class CloudBalance implements Serializable, Comparable<CloudBalance> {
         Map<NodeType, Integer> nodeTypeCpuUsageMap = nodeTypes.stream()
                 .collect(Collectors.toMap(nodeType -> nodeType, nodeType -> 0, (a, b) -> a));
 
-        Map<CloudComputer, Integer> cpuUsageMap = new HashMap<>(cloudComputers.size());
+        Map<CloudComputer, NodeResourceUsage> nodeUsageMap = new HashMap<>(cloudComputers.size());
 
         cloudComputers.forEach(computer -> {
             int cpuCapacityNodeType = nodeTypeCpuCapacityMap.get(computer.getNodeType()) + computer.getCpuCapacity();
             nodeTypeCpuCapacityMap.put(computer.getNodeType(), cpuCapacityNodeType);
             int cpuCapacityAZ = azCpuCapacityMap.get(computer.getAvailabilityZone()) + computer.getCpuCapacity();
             azCpuCapacityMap.put(computer.getAvailabilityZone(), cpuCapacityAZ);
-            cpuUsageMap.put(computer, 0);
+            nodeUsageMap.put(computer, NodeResourceUsage.builder().build());
 
         });
 
@@ -80,7 +80,7 @@ public class CloudBalance implements Serializable, Comparable<CloudBalance> {
                 .azCpuUsageMap(azCpuUsageMap)
                 .nodeTypeCpuCapacityMap(nodeTypeCpuCapacityMap)
                 .nodeTypeCpuUsageMap(nodeTypeCpuUsageMap)
-                .cpuUsageMap(cpuUsageMap)
+                .nodeUsageMap(nodeUsageMap)
                 .build();
     }
 }

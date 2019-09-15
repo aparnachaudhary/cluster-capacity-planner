@@ -73,7 +73,7 @@ public class SolutionDataImporter implements ApplicationRunner {
 
     private List<CloudProcess> fetchAndSaveCloudProcesses() throws IOException {
 
-        InputStream is = this.getClass().getResourceAsStream("/data/process-value/processes-small.csv");
+        InputStream is = this.getClass().getResourceAsStream("/data/processes/processes-small.csv");
         Iterable<CSVRecord> records = CSVFormat.DEFAULT.withFirstRecordAsHeader().parse(new InputStreamReader(is));
         List<CloudProcess> processes = new ArrayList<>(6);
         for (CSVRecord record : records) {
@@ -95,7 +95,7 @@ public class SolutionDataImporter implements ApplicationRunner {
 
     private List<CloudComputer> fetchAndSaveCloudComputers() throws IOException {
 
-        InputStream is = this.getClass().getResourceAsStream("/data/computer-value/computers-small.csv");
+        InputStream is = this.getClass().getResourceAsStream("/data/computers/computers-small.csv");
         Iterable<CSVRecord> records = CSVFormat.DEFAULT.withFirstRecordAsHeader().parse(new InputStreamReader(is));
         List<CloudComputer> computers = new ArrayList<>(2);
         for (CSVRecord record : records) {

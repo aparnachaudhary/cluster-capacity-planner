@@ -29,7 +29,7 @@ public class CloudCapacityScoreCalculator implements EasyScoreCalculator<CloudBa
         // Per NodeType CPU Capacity And Usage
         hardScore += cpuUsageNodeTypeScore(resourceCapacity);
         // Per Computer CPU Capacity And Usage
-        hardScore += cpuUsageComputerScore(resourceCapacity.getCpuUsageMap());
+        hardScore += cpuUsageComputerScore(resourceCapacity.getNodeUsageMap());
         // Assigned to Wrong NodeType
         hardScore += wrongNodeTypeAssignment(cloudBalance.getCloudProcesses());
         // Assigned to Wrong AZ
@@ -56,9 +56,16 @@ public class CloudCapacityScoreCalculator implements EasyScoreCalculator<CloudBa
                 boolean azConstraintMatched = computer.getAvailabilityZone().equals(process.getAvailabilityZoneRequired());
 
                 if (nodeTypeConstraintMatched && azConstraintMatched) {
-                    Map<CloudComputer, Integer> cpuUsageMap = resourceCapacity.getCpuUsageMap();
-                    int cpuPowerUsage = cpuUsageMap.get(computer) + process.getCpuRequired();
-                    cpuUsageMap.put(computer, cpuPowerUsage);
+                    Map<CloudComputer, NodeResourceUsage> nodeUsageMap = resourceCapacity.getNodeUsageMap();
+                    int cpuUsage = nodeUsageMap.get(computer).getCpuUsage() + process.getCpuRequired();
+                    int memUsage = nodeUsageMap.get(computer).getMemoryUsage() + process.getMemoryRequired();
+                    int diskUsage = nodeUsageMap.get(computer).getDiskUsage() + process.getDiskRequired();
+                    NodeResourceUsage nodeResourceUsage = NodeResourceUsage.builder()
+                            .cpuUsage(cpuUsage)
+                            .memoryUsage(memUsage)
+                            .diskUsage(diskUsage)
+                            .build();
+                    nodeUsageMap.put(computer, nodeResourceUsage);
                     // Add computer to used set
                     usedComputerSet.add(computer);
                 }
@@ -73,15 +80,15 @@ public class CloudCapacityScoreCalculator implements EasyScoreCalculator<CloudBa
 
         Map<AvailabilityZone, Integer> azCpuCapacityMap = resourceCapacity.getAzCpuCapacityMap();
         Map<AvailabilityZone, Integer> azCpuUsageMap = resourceCapacity.getAzCpuUsageMap();
-        Map<CloudComputer, Integer> cpuUsageMap = resourceCapacity.getCpuUsageMap();
+        Map<CloudComputer, NodeResourceUsage> nodeUsageMap = resourceCapacity.getNodeUsageMap();
 
 
-        for (CloudComputer computer : cpuUsageMap.keySet()) {
+        for (CloudComputer computer : nodeUsageMap.keySet()) {
 
             AvailabilityZone availabilityZone = computer.getAvailabilityZone();
 
             // Per AZ CPU Usage
-            int azCpuUsage = azCpuUsageMap.get(availabilityZone) + cpuUsageMap.get(computer);
+            int azCpuUsage = azCpuUsageMap.get(availabilityZone) + nodeUsageMap.get(computer).getCpuUsage();
             // Per AZ CPU Capacity
             int azCpuCapacity = azCpuCapacityMap.get(availabilityZone);
             azCpuUsageMap.put(availabilityZone, azCpuUsage);
@@ -102,15 +109,15 @@ public class CloudCapacityScoreCalculator implements EasyScoreCalculator<CloudBa
 
         Map<NodeType, Integer> nodeTypeCpuCapacityMap = resourceCapacity.getNodeTypeCpuCapacityMap();
         Map<NodeType, Integer> nodeTypeCpuUsageMap = resourceCapacity.getNodeTypeCpuUsageMap();
-        Map<CloudComputer, Integer> cpuUsageMap = resourceCapacity.getCpuUsageMap();
+        Map<CloudComputer, NodeResourceUsage> nodeUsageMap = resourceCapacity.getNodeUsageMap();
 
 
-        for (CloudComputer computer : resourceCapacity.getCpuUsageMap().keySet()) {
+        for (CloudComputer computer : nodeUsageMap.keySet()) {
 
             NodeType nodeType = computer.getNodeType();
 
             // Per NodeType CPU Usage
-            int nodeTypeCpuUsage = nodeTypeCpuUsageMap.get(nodeType) + cpuUsageMap.get(computer);
+            int nodeTypeCpuUsage = nodeTypeCpuUsageMap.get(nodeType) + nodeUsageMap.get(computer).getCpuUsage();
             // Per NodeType CPU Capacity
             int nodeTypeCpuCapacity = nodeTypeCpuCapacityMap.get(nodeType);
             nodeTypeCpuUsageMap.put(nodeType, nodeTypeCpuUsage);
@@ -125,15 +132,15 @@ public class CloudCapacityScoreCalculator implements EasyScoreCalculator<CloudBa
         return hardScore;
     }
 
-    private int cpuUsageComputerScore(Map<CloudComputer, Integer> cpuCapacityUsageMap) {
+    private int cpuUsageComputerScore(Map<CloudComputer, NodeResourceUsage> nodeResourceUsageMap) {
 
         int score = 0;
 
-        for (Map.Entry<CloudComputer, Integer> usageEntry : cpuCapacityUsageMap.entrySet()) {
+        for (Map.Entry<CloudComputer, NodeResourceUsage> usageEntry : nodeResourceUsageMap.entrySet()) {
             CloudComputer computer = usageEntry.getKey();
-            int cpuPowerAvailable = computer.getCpuCapacity() - usageEntry.getValue();
-            if (cpuPowerAvailable < 0) {
-                score += cpuPowerAvailable;
+            int cpuAvailable = computer.getCpuCapacity() - usageEntry.getValue().getCpuUsage();
+            if (cpuAvailable < 0) {
+                score += cpuAvailable;
             }
         }
         return score;
