@@ -11,13 +11,13 @@ public class CloudCapacityScoreCalculator implements EasyScoreCalculator<Cluster
     @Override
     public HardMediumSoftScore calculateScore(ClusterBalance clusterBalance) {
 
-        int computerListSize = clusterBalance.getClusterNodes().size();
-        Set<ClusterNode> usedComputerSet = new HashSet<>(computerListSize);
+        int clusterNodeSize = clusterBalance.getClusterNodes().size();
+        Set<ClusterNode> usedClusterNodes = new HashSet<>(clusterNodeSize);
 
 
         CloudUtilization resourceCapacity = clusterBalance.getResourceCapacity();
 
-        visitProcessList(resourceCapacity, usedComputerSet, clusterBalance.getClusterProcesses());
+        visitProcessList(resourceCapacity, usedClusterNodes, clusterBalance.getClusterProcesses());
 
 
         int hardScore = 0;
@@ -28,46 +28,46 @@ public class CloudCapacityScoreCalculator implements EasyScoreCalculator<Cluster
         hardScore += cpuUsageAvailabilityZoneScore(resourceCapacity);
         // Per ClusterNodeType CPU Capacity And Usage
         hardScore += cpuUsageNodeTypeScore(resourceCapacity);
-        // Per Computer CPU Capacity And Usage
-        hardScore += cpuUsageComputerScore(resourceCapacity.getNodeResourceUsageMap());
+        // Per ClusterNode CPU Capacity And Usage
+        hardScore += cpuUsageClusterNodeScore(resourceCapacity.getNodeResourceUsageMap());
         // Assigned to Wrong ClusterNodeType
         hardScore += wrongNodeTypeAssignment(clusterBalance.getClusterProcesses());
         // Assigned to Wrong AZ
         hardScore += wrongAZAssignment(clusterBalance.getClusterProcesses());
-        // Not Assigned to Any Computer
-        mediumScore += notAssignedToComputer(clusterBalance.getClusterProcesses());
-        // Cost incurred based on Computers Used
-        softScore += usedComputerCostScore(usedComputerSet);
+        // Not Assigned to Any Cluster Node
+        mediumScore += notAssignedToClusterNode(clusterBalance.getClusterProcesses());
+        // Cost incurred based on Cluster Nodes Used
+        softScore += usedClusterNodesCostScore(usedClusterNodes);
 
         return HardMediumSoftScore.of(hardScore, mediumScore, softScore);
     }
 
 
-    private void visitProcessList(CloudUtilization resourceCapacity, Set<ClusterNode> usedComputerSet,
+    private void visitProcessList(CloudUtilization resourceCapacity, Set<ClusterNode> usedClusterNodes,
                                   List<ClusterProcess> processList) {
 
         // We loop through the processList only once for performance
         for (ClusterProcess process : processList) {
-            ClusterNode computer = process.getClusterNode();
+            ClusterNode clusterNode = process.getClusterNode();
 
-            if (computer != null) {
+            if (clusterNode != null) {
 
-                boolean nodeTypeConstraintMatched = computer.getClusterNodeType().equals(process.getClusterNodeType());
-                boolean azConstraintMatched = computer.getAvailabilityZone().equals(process.getAvailabilityZoneRequired());
+                boolean nodeTypeConstraintMatched = clusterNode.getClusterNodeType().equals(process.getClusterNodeType());
+                boolean azConstraintMatched = clusterNode.getAvailabilityZone().equals(process.getAvailabilityZoneRequired());
 
                 if (nodeTypeConstraintMatched && azConstraintMatched) {
                     Map<ClusterNode, ResourceUsage> nodeUsageMap = resourceCapacity.getNodeResourceUsageMap();
-                    int cpuUsage = nodeUsageMap.get(computer).getCpuUsage() + process.getCpuRequired();
-                    int memUsage = nodeUsageMap.get(computer).getMemoryUsage() + process.getMemoryRequired();
-                    int diskUsage = nodeUsageMap.get(computer).getDiskUsage() + process.getDiskRequired();
+                    int cpuUsage = nodeUsageMap.get(clusterNode).getCpuUsage() + process.getCpuRequired();
+                    int memUsage = nodeUsageMap.get(clusterNode).getMemoryUsage() + process.getMemoryRequired();
+                    int diskUsage = nodeUsageMap.get(clusterNode).getDiskUsage() + process.getDiskRequired();
                     ResourceUsage resourceUsage = ResourceUsage.builder()
                             .cpuUsage(cpuUsage)
                             .memoryUsage(memUsage)
                             .diskUsage(diskUsage)
                             .build();
-                    nodeUsageMap.put(computer, resourceUsage);
-                    // Add computer to used set
-                    usedComputerSet.add(computer);
+                    nodeUsageMap.put(clusterNode, resourceUsage);
+                    // Add clusterNode to used set
+                    usedClusterNodes.add(clusterNode);
                 }
             }
         }
@@ -83,12 +83,12 @@ public class CloudCapacityScoreCalculator implements EasyScoreCalculator<Cluster
         Map<ClusterNode, ResourceUsage> nodeUsageMap = resourceCapacity.getNodeResourceUsageMap();
 
 
-        for (ClusterNode computer : nodeUsageMap.keySet()) {
+        for (ClusterNode clusterNode : nodeUsageMap.keySet()) {
 
-            AvailabilityZone availabilityZone = computer.getAvailabilityZone();
+            AvailabilityZone availabilityZone = clusterNode.getAvailabilityZone();
             // Per AZ CPU Usage
             ResourceUsage resourceUsage = azResourceUsageMap.get(availabilityZone);
-            int azCpuUsage = resourceUsage.getCpuUsage() + nodeUsageMap.get(computer).getCpuUsage();
+            int azCpuUsage = resourceUsage.getCpuUsage() + nodeUsageMap.get(clusterNode).getCpuUsage();
             resourceUsage.setCpuUsage(azCpuUsage);
             // Per AZ CPU Capacity
             int azCpuCapacity = azResourceCapacityMap.get(availabilityZone).getCpuCapacity();
@@ -111,12 +111,12 @@ public class CloudCapacityScoreCalculator implements EasyScoreCalculator<Cluster
         Map<ClusterNode, ResourceUsage> nodeUsageMap = resourceCapacity.getNodeResourceUsageMap();
 
 
-        for (ClusterNode computer : nodeUsageMap.keySet()) {
+        for (ClusterNode clusterNode : nodeUsageMap.keySet()) {
 
-            ClusterNodeType nodeType = computer.getClusterNodeType();
+            ClusterNodeType nodeType = clusterNode.getClusterNodeType();
             // Per ClusterNodeType CPU Usage
             ResourceUsage resourceUsage = nodeTypeResourceUsageMap.get(nodeType);
-            int nodeTypeCpuUsage = resourceUsage.getCpuUsage() + nodeUsageMap.get(computer).getCpuUsage();
+            int nodeTypeCpuUsage = resourceUsage.getCpuUsage() + nodeUsageMap.get(clusterNode).getCpuUsage();
             resourceUsage.setCpuUsage(nodeTypeCpuUsage);
             // Per ClusterNodeType CPU Capacity
             int nodeTypeCpuCapacity = nodeTypeResourceCapacityMap.get(nodeType).getCpuCapacity();
@@ -130,13 +130,13 @@ public class CloudCapacityScoreCalculator implements EasyScoreCalculator<Cluster
         return hardScore;
     }
 
-    private int cpuUsageComputerScore(Map<ClusterNode, ResourceUsage> nodeResourceUsageMap) {
+    private int cpuUsageClusterNodeScore(Map<ClusterNode, ResourceUsage> nodeResourceUsageMap) {
 
         int score = 0;
 
         for (Map.Entry<ClusterNode, ResourceUsage> usageEntry : nodeResourceUsageMap.entrySet()) {
-            ClusterNode computer = usageEntry.getKey();
-            int cpuAvailable = computer.getCpuCapacity() - usageEntry.getValue().getCpuUsage();
+            ClusterNode clusterNode = usageEntry.getKey();
+            int cpuAvailable = clusterNode.getCpuCapacity() - usageEntry.getValue().getCpuUsage();
             if (cpuAvailable < 0) {
                 score += cpuAvailable;
             }
@@ -144,12 +144,12 @@ public class CloudCapacityScoreCalculator implements EasyScoreCalculator<Cluster
         return score;
     }
 
-    private int notAssignedToComputer(List<ClusterProcess> processSet) {
+    private int notAssignedToClusterNode(List<ClusterProcess> processSet) {
 
         int score = 0;
 
         for (ClusterProcess clusterProcess : processSet) {
-            // not assigned to any computer
+            // not assigned to any cluster node
             if (clusterProcess.getClusterNode() == null) {
                 score -= clusterProcess.getDifficultyIndex();
             }
@@ -183,11 +183,11 @@ public class CloudCapacityScoreCalculator implements EasyScoreCalculator<Cluster
         return score;
     }
 
-    private int usedComputerCostScore(Set<ClusterNode> usedComputerSet) {
+    private int usedClusterNodesCostScore(Set<ClusterNode> usedClusterNodes) {
 
         int score = 0;
-        for (ClusterNode usedComputer : usedComputerSet) {
-            score -= usedComputer.getCost();
+        for (ClusterNode usedClusterNode : usedClusterNodes) {
+            score -= usedClusterNode.getCost();
         }
         return score;
     }

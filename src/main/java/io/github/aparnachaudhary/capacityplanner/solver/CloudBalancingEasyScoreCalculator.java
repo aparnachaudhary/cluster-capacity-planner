@@ -18,7 +18,7 @@ public class CloudBalancingEasyScoreCalculator implements EasyScoreCalculator<Cl
         int hardScore = 0;
         int softScore = 0;
 
-        for (ClusterNode computer : clusterBalance.getClusterNodes()) {
+        for (ClusterNode clusterNode : clusterBalance.getClusterNodes()) {
             int cpuCapacityUsage = 0;
             int memoryUsage = 0;
             int diskUsage = 0;
@@ -26,7 +26,7 @@ public class CloudBalancingEasyScoreCalculator implements EasyScoreCalculator<Cl
 
             // Calculate usage
             for (ClusterProcess process : clusterBalance.getClusterProcesses()) {
-                if (computer.equals(process.getClusterNode())) {
+                if (clusterNode.equals(process.getClusterNode())) {
                     cpuCapacityUsage += process.getCpuRequired();
                     memoryUsage += process.getMemoryRequired();
                     diskUsage += process.getDiskRequired();
@@ -35,22 +35,22 @@ public class CloudBalancingEasyScoreCalculator implements EasyScoreCalculator<Cl
             }
 
             // Hard constraints
-            int cpuPowerAvailable = computer.getCpuCapacity() - cpuCapacityUsage;
+            int cpuPowerAvailable = clusterNode.getCpuCapacity() - cpuCapacityUsage;
             if (cpuPowerAvailable < 0) {
                 hardScore += cpuPowerAvailable;
             }
-            int memoryAvailable = computer.getMemoryCapacity() - memoryUsage;
+            int memoryAvailable = clusterNode.getMemoryCapacity() - memoryUsage;
             if (memoryAvailable < 0) {
                 hardScore += memoryAvailable;
             }
-            int diskAvailable = computer.getDiskCapacity() - diskUsage;
+            int diskAvailable = clusterNode.getDiskCapacity() - diskUsage;
             if (diskAvailable < 0) {
                 hardScore += diskAvailable;
             }
 
             // Soft constraints
             if (used) {
-                softScore -= computer.getCost();
+                softScore -= clusterNode.getCost();
             }
         }
         return HardSoftScore.of(hardScore, softScore);

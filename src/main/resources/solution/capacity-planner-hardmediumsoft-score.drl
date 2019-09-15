@@ -73,7 +73,7 @@ end
 // Soft constraints
 // ############################################################################
 
-rule "clusterNode Cost"
+rule "ClusterNode Cost"
     when
         $clusterNode : ClusterNode($cost : cost)
         exists ClusterProcess(clusterNode == $clusterNode)

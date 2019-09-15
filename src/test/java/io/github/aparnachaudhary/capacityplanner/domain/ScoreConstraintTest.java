@@ -160,10 +160,10 @@ public class ScoreConstraintTest {
                 .clusterProcesses(Collections.singletonList(p1))
                 .build();
 
-        scoreVerifier.assertSoftWeight("Computer Cost", -50, s1);
+        scoreVerifier.assertSoftWeight("ClusterNode Cost", -50, s1);
 
         s1.setClusterProcesses(Arrays.asList(p1, p2));
-        scoreVerifier.assertSoftWeight("Computer Cost", -550, s1);
+        scoreVerifier.assertSoftWeight("ClusterNode Cost", -550, s1);
     }
 
     @Test

@@ -15,35 +15,44 @@ global HardMediumSoftScoreHolder scoreHolder;
 
 rule "CPU capacity"
     when
+        // there is a clusterNode
         $clusterNode : ClusterNode($cpuCapacity : cpuCapacity)
+        // with too little cpu for its processes
         $totalUsed : Integer($totalUsed > $cpuCapacity) from accumulate(
             ClusterProcess(clusterNode == $clusterNode, $cpuRequired : cpuRequired),
             sum($cpuRequired)
         )
     then
+        // lower hard score by the excessive CPU usage
         scoreHolder.addHardConstraintMatch(kcontext, $cpuCapacity - $totalUsed);
 end
 
 rule "Memory capacity"
     when
+        // there is a clusterNode
         $clusterNode : ClusterNode($memoryCapacity : memoryCapacity)
+        // with too little memory for its processes
         $totalUsed : Integer($totalUsed > $memoryCapacity) from accumulate(
             ClusterProcess(clusterNode == $clusterNode, $memoryRequired : memoryRequired),
             sum($memoryRequired)
         )
     then
+        // lower hard score by the excessive MEM usage
         scoreHolder.addHardConstraintMatch(kcontext, $memoryCapacity - $totalUsed);
 end
 
-rule "Network capacity"
+rule "Disk capacity"
     when
-        $clusterNode : ClusterNode($networkCapacity : networkCapacity)
-        $totalUsed : Integer($totalUsed > $networkCapacity) from accumulate(
-            ClusterProcess(clusterNode == $clusterNode, $networkRequired : networkRequired),
-            sum($networkRequired)
+        // there is a clusterNode
+        $clusterNode : ClusterNode($diskCapacity : diskCapacity)
+        // with too little Disk Capacity for its processes
+        $totalUsed : Integer($totalUsed > $diskCapacity) from accumulate(
+            ClusterProcess(clusterNode == $clusterNode, $diskRequired : diskRequired),
+            sum($diskRequired)
         )
     then
-        scoreHolder.addHardConstraintMatch(kcontext, $networkCapacity - $totalUsed);
+        // lower hard score by the excessive Disk usage
+        scoreHolder.addHardConstraintMatch(kcontext, $diskCapacity - $totalUsed);
 end
 
 // ############################################################################
@@ -52,8 +61,10 @@ end
 
 rule "Not Assigned"
     when
+        // there is a process which does not have clusterNode assigned
         ClusterProcess($weightIndex : getDifficultyIndex(), clusterNode == null)
     then
+        // lower medium score by the unassigned resources of the process
         scoreHolder.addMediumConstraintMatch(kcontext, -$weightIndex);
 end
 
@@ -62,7 +73,7 @@ end
 // Soft constraints
 // ############################################################################
 
-rule "Computer Cost"
+rule "ClusterNode Cost"
     when
         $clusterNode : ClusterNode($cost : cost)
         exists ClusterProcess(clusterNode == $clusterNode)
