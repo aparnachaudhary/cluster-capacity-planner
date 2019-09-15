@@ -12,9 +12,9 @@ public class CloudUtilization {
     private Map<AvailabilityZone, ResourceCapacity> azResourceCapacityMap;
     private Map<AvailabilityZone, ResourceUsage> azResourceUsageMap;
 
-    private Map<NodeType, Integer> nodeTypeCpuCapacityMap;
-    private Map<NodeType, Integer> nodeTypeCpuUsageMap;
+    private Map<NodeType, ResourceCapacity> nodeTypeResourceCapacityMap;
+    private Map<NodeType, ResourceUsage> nodeTypeResourceUsageMap;
 
-    private Map<CloudComputer, ResourceUsage> nodeUsageMap;
+    private Map<CloudComputer, ResourceUsage> nodeResourceUsageMap;
 
 }
