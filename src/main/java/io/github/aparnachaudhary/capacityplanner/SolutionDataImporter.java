@@ -79,6 +79,7 @@ public class SolutionDataImporter implements ApplicationRunner {
         for (CSVRecord record : records) {
             processes.add(CloudProcess.builder()
                     .id(Long.parseLong(record.get("id")))
+                    .name(record.get("name"))
                     .cpuRequired(Integer.parseInt(record.get("cpu")))
                     .memoryRequired(Integer.parseInt(record.get("memory")))
                     .diskRequired(Integer.parseInt(record.get("disk")))
@@ -100,6 +101,7 @@ public class SolutionDataImporter implements ApplicationRunner {
         for (CSVRecord record : records) {
             computers.add(CloudComputer.builder()
                     .id(Long.parseLong(record.get("id")))
+                    .name(record.get("name"))
                     .cpuCapacity(Integer.parseInt(record.get("cpu")))
                     .memoryCapacity(Integer.parseInt(record.get("memory")))
                     .diskCapacity(Integer.parseInt(record.get("disk")))

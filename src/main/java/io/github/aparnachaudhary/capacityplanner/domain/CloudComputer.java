@@ -20,6 +20,7 @@ public class CloudComputer implements Serializable, Comparable<CloudComputer> {
     @PlanningId
     @Id
     protected Long id;
+    private String name;
 
     private int cpuCapacity;
     private int memoryCapacity;
@@ -46,7 +47,8 @@ public class CloudComputer implements Serializable, Comparable<CloudComputer> {
     public String toString() {
 
         return "[CloudComputer - " + id +
-                " with CPU:" + cpuCapacity +
+                " with name:" + name +
+                ", CPU:" + cpuCapacity +
                 ", MEM:" + memoryCapacity +
                 ", DISK:" + diskCapacity +
                 ", AZ:" + availabilityZone +

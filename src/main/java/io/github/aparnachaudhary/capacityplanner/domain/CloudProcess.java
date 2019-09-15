@@ -28,6 +28,7 @@ public class CloudProcess implements Serializable, Comparable<CloudProcess> {
     @PlanningId
     @Id
     protected Long id;
+    private String name;
 
     private int cpuRequired;
     private int memoryRequired;
@@ -51,7 +52,8 @@ public class CloudProcess implements Serializable, Comparable<CloudProcess> {
     public String toString() {
 
         return "CloudProcess - " + id +
-                " with cpuRequired:" + cpuRequired +
+                " with name:" + name +
+                ", cpuRequired:" + cpuRequired +
                 ", memoryRequired:" + memoryRequired +
                 ", diskRequired:" + diskRequired +
                 ", AZ:" + availabilityZoneRequired +
